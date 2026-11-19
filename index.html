@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>CAD Mission – Technical Explorer</title>
+<style>
+:root{
+  --bg:#0f141d;
+  --grid:rgba(0, 240, 255, 0.05);
+  --grid-bold:rgba(0, 240, 255, 0.12);
+  --card:#18202c;
+  --card-border:#2a3649;
+  --ink:#e1e7ed;
+  --mut:#8b9eb3;
+  --acc:#d62839;
+  --cad-cyan:#00f0ff;
+  --cad-yellow:#ffd166;
+  --cad-green:#00e676;
+  --okbg:#0f3822;
+  --badbg:#3d1418;
+  --sel:#132e48;
+  box-sizing:border-box;
+}
+
+html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font:15px/1.5 "Segoe UI", -apple-system, Roboto, monospace;
+  background:var(--bg);
+  color:var(--ink);
+  background-image: 
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    linear-gradient(var(--grid-bold) 2px, transparent 2px),
+    linear-gradient(90deg, var(--grid-bold) 2px, transparent 2px);
+  background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+  background-position: -1px -1px;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden;
+}
+
+.mono{font-family:ui-monospace, Consolas, "Courier New", monospace}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:9;
+  background:#111722;
+  border-bottom:2px solid var(--cad-cyan);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px 16px;
+  padding-top:max(10px, env(safe-area-inset-top));
+  flex-wrap:wrap;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+header.hidden-header {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.logo{font-weight:800;letter-spacing:1px;font-size:18px;display:flex;align-items:center;gap:8px}
+.logo-icon{width:24px;height:24px;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:900;border-radius:4px;font-size:14px}
+.logo b{color:var(--cad-cyan)}
+
+.hud{display:flex;gap:6px;align-items:center;font-size:13px;flex-wrap:wrap}
+.hud span{
+  background:#1b2535;
+  border:1px solid var(--card-border);
+  border-radius:6px;
+  padding:4px 9px;
+  white-space:nowrap;
+  color:var(--ink);
+}
+.hud button{
+  border:1px solid var(--card-border);
+  background:#1b2535;
+  color:var(--ink);
+  border-radius:6px;
+  padding:4px 10px;
+  cursor:pointer;
+  min-height:30px;
+}
+
+main{
+  max-width:880px;
+  width:100%;
+  margin:auto;
+  padding:16px 12px 36px;
+  padding-bottom:max(36px, env(safe-area-inset-bottom));
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.panel{
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  padding:24px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+  position:relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.panel.morphing {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+}
+
+.panel.flash-ok {
+  box-shadow: 0 0 0 2px var(--cad-green), 0 12px 40px rgba(0, 230, 118, 0.25);
+}
+.panel.flash-bad {
+  box-shadow: 0 0 0 2px var(--acc), 0 12px 40px rgba(214, 40, 57, 0.28);
+  animation: sk .4s;
+}
+
+.splash-content {
+  text-align: center;
+  padding: 28px 10px;
+}
+.splash-title {
+  font-size: clamp(24px, 5vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.splash-title span {
+  color: var(--cad-cyan);
+}
+.splash-subtitle {
+  color: var(--mut);
+  font-size: clamp(14px, 3.5vw, 16px);
+  max-width: 520px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+.pulse-btn {
+  background: linear-gradient(135deg, var(--cad-cyan), #0088ff);
+  color: #05070a;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-weight: 800;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  animation: pulse 2s infinite;
+  border: 0;
+  cursor: pointer;
+  min-height: 48px;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 240, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+}
+
+h1,h2{margin:.2em 0 .4em;line-height:1.25;color:#fff}
+h1{font-size:clamp(20px, 4.5vw, 26px);border-bottom:1px solid var(--card-border);padding-bottom:8px}
+h2{font-size:clamp(18px, 4vw, 20px);color:var(--cad-cyan)}
+.mut{color:var(--mut);margin:.2em 0 .9em;font-size:14px}
+
+.btn{
+  background:var(--cad-cyan);
+  color:#0f141d;
+  border:0;
+  border-radius:8px;
+  padding:11px 18px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+  transition:.18s;
+  letter-spacing:.4px;
+  min-height:44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.btn:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.btn:active:not(:disabled){transform:scale(0.98)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--card-border)}
+.btn.ghost:hover:not(:disabled){border-color:var(--cad-cyan);color:var(--cad-cyan)}
+.btn.confirm-btn{background:var(--cad-yellow);color:#0f141d;box-shadow:0 4px 14px rgba(255,209,102,0.28)}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.btn[hidden]{display:none !important}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;font-size:12px}
+.steps span{padding:4px 10px;border-radius:4px;border:1px solid var(--card-border);color:var(--mut);background:#111722}
+.steps .on{background:var(--sel);border-color:var(--cad-cyan);color:var(--cad-cyan);font-weight:700}
+.steps .dn{background:var(--okbg);color:var(--cad-green);border-color:var(--cad-green)}
+
+.strip{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0;background:#111722;padding:12px;border-radius:8px;border:1px dashed var(--card-border)}
+.strip svg{width:32px;height:32px;color:var(--cad-cyan);animation:fl 2.4s ease-in-out infinite}
+.strip svg:nth-child(2n){animation-delay:.6s;color:var(--cad-yellow)}
+.strip svg:nth-child(3n){animation-delay:1.2s;color:var(--acc)}
+@keyframes fl{50%{transform:translateY(-4px)}}
+
+input, select{
+  font-family:ui-monospace, Consolas, monospace;
+  padding:12px 14px;
+  border-radius:8px;
+  border:1px solid var(--card-border);
+  background:#111722;
+  color:var(--cad-cyan);
+  min-width:0;
+  font-size:16px;
+}
+input:focus{outline:2px solid var(--cad-cyan)}
+
+.mg{display:grid;grid-template-columns:1fr 1.25fr;gap:12px}
+.col{display:flex;flex-direction:column;gap:10px}
+
+.m{
+  border:1.5px solid var(--card-border);
+  background:#111722;
+  border-radius:8px;
+  padding:12px 14px;
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  cursor:pointer;
+  transition:all .18s ease;
+  user-select:none;
+  font-size:14px;
+  position:relative;
+}
+.m:hover{border-color:var(--cad-cyan);background:var(--sel)}
+.m.sel{
+  border-color:var(--cad-cyan);
+  background:var(--sel);
+  box-shadow:0 0 14px rgba(0,240,255,0.28);
+  transform:translateX(3px);
+}
+.m.ok{
+  border-color:var(--cad-green);
+  background:var(--okbg);
+  pointer-events:none;
+  color:#d4ffe6;
+  animation:popOk .38s cubic-bezier(.2,1.4,.4,1);
+}
+.m.bad{
+  border-color:var(--acc);
+  background:var(--badbg);
+  color:#ffb3ba;
+  animation:sk .4s;
+}
+
+@keyframes popOk{
+  0%{transform:scale(0.97)}
+  50%{transform:scale(1.02)}
+  100%{transform:scale(1)}
+}
+@keyframes sk{
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+
+.m.l svg{width:36px;height:36px;color:var(--cad-cyan);margin:0 auto;flex-shrink:0}
+.m.l:has(.mini) svg{width:26px;height:26px;margin:0}
+.mini{display:flex;align-items:center}
+
+.prog{height:6px;background:#111722;border-radius:4px;margin-top:16px;overflow:hidden;border:1px solid var(--card-border)}
+.prog i{display:block;height:100%;width:0;background:var(--cad-cyan);transition:width .4s}
+
+.q{background:#111722;border-left:4px solid var(--cad-cyan);padding:14px 16px;border-radius:8px;font-size:15px;margin-bottom:14px;border-top:1px solid var(--card-border);border-right:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
+
+canvas{width:100%;max-width:440px;aspect-ratio:360/220;border-radius:8px;border:2px solid var(--card-border);display:block;margin:0 auto;background:#05070a}
+
+.cmd{display:flex;gap:8px;align-items:center;margin-top:12px;background:#05070a;border:1.5px solid var(--card-border);border-radius:8px;padding:6px 8px 6px 12px;color:var(--cad-green)}
+.cmd input{flex:1;background:transparent;border:0;color:#fff;outline:0;text-transform:uppercase;font-size:16px;padding:6px 4px}
+.cmd input.bad{animation:sk .4s;color:#ff8a94}
+.cmd input.okk{color:var(--cad-green)}
+
+.fb{margin:12px 0 0;font-size:14px;min-height:24px}
+.fb-card{
+  padding:12px 14px;
+  border-radius:8px;
+  border-left:4px solid var(--cad-cyan);
+  background:#111722;
+  animation:fadeSlide .28s ease;
+  line-height:1.45;
+}
+.fb-card.ok{border-left-color:var(--cad-green);background:rgba(15,56,34,0.75);color:#d7ffe8}
+.fb-card.bad{border-left-color:var(--acc);background:rgba(61,20,24,0.8);color:#ffd6da}
+.fb-card.hint{border-left-color:var(--cad-yellow);background:rgba(255,209,102,0.1);color:#ffe9b3}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.attempt-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  padding:3px 10px;
+  border-radius:99px;
+  background:#111722;
+  border:1px solid var(--card-border);
+  color:var(--cad-yellow);
+  margin-bottom:10px;
+}
+
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:12px}
+.cd{display:flex;gap:12px;border:1px solid var(--card-border);border-radius:8px;padding:12px;background:#111722}
+.cd svg{width:36px;height:36px;color:var(--cad-cyan);flex:none}
+.cd p{margin:2px 0 0;font-size:13px;color:var(--mut)}
+.al{background:var(--acc);color:#fff;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+
+.big{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin:16px 0}
+.big div{text-align:center;border:1px solid var(--card-border);border-radius:8px;padding:12px 8px;background:#111722}
+.big b{display:block;font-size:20px;color:var(--cad-cyan)}
+
+.stars{font-size:32px;letter-spacing:4px}
+
+.mc{display:grid;gap:8px;margin:12px 0}
+.mc div{border:1px solid var(--card-border);border-left:4px solid var(--cad-cyan);border-radius:6px;padding:10px 14px;background:#111722}
+.mc small{display:block;color:var(--mut);font-size:13px;margin-top:2px}
+
+.q ol{margin:.5em 0;padding-left:1.5em}.q li{margin:4px 0}.m.op{font-size:14px;align-items:flex-start}.m.op b{color:var(--cad-cyan)}
+
+h3{margin:16px 0 8px;font-size:15px;color:var(--cad-cyan)}
+
+.sync-badge{font-size:11px;padding:2px 8px;border-radius:4px;background:var(--okbg);color:var(--cad-green);border:1px solid var(--cad-green);display:inline-flex;align-items:center;gap:4px}
+.status-pill{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:700;white-space:nowrap}
+.status-active{background:rgba(255,209,102,.15);color:var(--cad-yellow);border:1px solid var(--cad-yellow)}
+.status-done{background:var(--okbg);color:var(--cad-green);border:1px solid var(--cad-green)}
+
+.admin-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+.admin-table th, .admin-table td{border:1px solid var(--card-border);padding:10px 8px;text-align:left}
+.admin-table th{background:#111722;color:var(--cad-cyan)}
+
+.podium-box{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin:12px 0;text-align:center}
+.podium-card{background:#111722;border:1px solid var(--card-border);border-top:3px solid var(--cad-cyan);border-radius:6px;padding:12px;font-size:13px}
+.podium-card b{display:block;font-size:15px;color:var(--cad-yellow);margin-bottom:4px}
+
+/* RESPONSIVE MOBILE LAYOUT */
+@media(max-width:600px){
+  header{padding:8px 12px; gap:6px}
+  .logo{font-size:16px}
+  .hud{width:100%; justify-content:space-between; font-size:12px}
+  .hud span{padding:3px 7px}
+  main{padding:12px 10px 28px}
+  .panel{padding:16px 14px; border-radius:10px}
+  .mg{grid-template-columns:1fr 1.35fr; gap:8px}
+  .m{padding:10px 10px; min-height:50px; font-size:13px; gap:8px}
+  .m.l svg{width:30px; height:30px}
+  .row{flex-direction:column; width:100%}
+  .row .btn{width:100%}
+  .cmd{flex-wrap:wrap; padding:8px}
+  .cmd input{width:100%; min-width:140px}
+  .cmd .btn{width:100%}
+  .podium-box{grid-template-columns:1fr}
+  .steps{gap:4px; font-size:11px}
+  .steps span{padding:4px 8px; flex:1; text-align:center}
+  .q{padding:12px; font-size:14px}
+}
+</style>
+</head>
+<body>
+<header id="mainHeader" class="hidden-header">
+  <div class="logo">
+    <div class="logo-icon">📐</div>
+    <div>CAD<b>MISSION</b></div>
+  </div>
+  <div class="hud">
+    <span class="sync-badge" id="syncStatus">🟡 Lokal / Offline</span>
+    <span>⭐ <b id="sc">0</b></span>
+    <span>🔥 <b id="st">0</b></span>
+    <span>⏱ <b id="tm" class="mono">00:00</b></span>
+    <button id="sn" title="Suara">🔊</button>
+    <button id="exitBtn" title="Keluar ke lobi" style="display:none">⏏ Keluar</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+// =========================================================================
+// 1. MASUKKAN KONFIGURASI FIREBASE ANDA DI SINI UNTUK LIVE SYNC ANTARPERANGKAT
+// =========================================================================
+window.FIREBASE_CONFIG = {
+  apiKey: "API_KEY_ANDA",
+  authDomain: "PROJECT_ID.firebaseapp.com",
+  projectId: "PROJECT_ID",
+  storageBucket: "PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+
+// =========================================================================
+// 2. SISTEM SINKRONISASI REAL-TIME (UPSERT BERDASARKAN SESSION ID SISWA)
+// =========================================================================
+const STORAGE_KEY = 'cad_mission_results_v2';
+
+// Modul Firebase dimuat belakangan (type="module"), jadi semua sinkronisasi menunggu sinyal ini.
+window._fbActive = false;
+window._fbReady = new Promise(res => { window._fbResolve = res; });
+const _waitFirebase = () => Promise.race([window._fbReady, new Promise(r => setTimeout(r, 5000))]);
+
+function getLocalResults() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function upsertLocalResult(sessionId, data) {
+  const list = getLocalResults();
+  const idx = list.findIndex(item => item.sessionId === sessionId);
+  const record = {
+    ...data,
+    sessionId,
+    updatedAt: new Date().toISOString()
+  };
+  if (idx !== -1) {
+    list[idx] = { ...list[idx], ...record };
+  } else {
+    list.push(record);
+  }
+  list.sort((a, b) => (b.skor - a.skor) || (a.durasiDetik - b.durasiDetik));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  window.dispatchEvent(new Event('cad_results_updated'));
+}
+
+window.syncStudentSession = async function(sessionId, gameData, callback) {
+  upsertLocalResult(sessionId, gameData);
+  await _waitFirebase();
+  if (window._firebaseUpsert) {
+    await window._firebaseUpsert(sessionId, gameData);
+  }
+  if (callback) callback();
+};
+
+window.clearAllResults = async function() {
+  localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event('cad_results_updated'));
+  if (window._firebaseClearAll) {
+    await window._firebaseClearAll();
+  }
+};
+
+let _activeLocal = null, _activeRemoteUnsub = null, _listenToken = 0;
+window.listenToStudentResults = function(callback) {
+  const token = ++_listenToken;
+  if (_activeLocal) {
+    window.removeEventListener('storage', _activeLocal);
+    window.removeEventListener('cad_results_updated', _activeLocal);
+    _activeLocal = null;
+  }
+  if (_activeRemoteUnsub) {
+    try { _activeRemoteUnsub(); } catch (e) {}
+    _activeRemoteUnsub = null;
+  }
+
+  callback(getLocalResults());
+
+  const onLocal = (e) => {
+    if (window._fbActive) return; // saat cloud aktif, data cloud yang dipakai
+    if (!e || e.key === STORAGE_KEY || e.type === 'cad_results_updated') {
+      callback(getLocalResults());
+    }
+  };
+  _activeLocal = onLocal;
+  window.addEventListener('storage', onLocal);
+  window.addEventListener('cad_results_updated', onLocal);
+
+  window._fbReady.then(() => {
+    if (token !== _listenToken) return; // sudah ada listener yang lebih baru
+    if (window._firebaseListen) {
+      _activeRemoteUnsub = window._firebaseListen(callback);
+    }
+  });
+};
+</script>
+
+<!-- Modul Cloud Firestore (Aktif otomatis bila FIREBASE_CONFIG diisi & dibuka lewat HTTP/HTTPS) -->
+<script type="module">
+  const cfg = window.FIREBASE_CONFIG;
+  if (cfg && cfg.apiKey && cfg.apiKey !== "API_KEY_ANDA" && location.protocol.startsWith("http")) {
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+      const { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, serverTimestamp, onSnapshot, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+      const app = initializeApp(cfg);
+      const db = getFirestore(app);
+
+      const syncBadge = document.getElementById('syncStatus');
+      if (syncBadge) {
+        syncBadge.textContent = "🟢 Live Cloud Sync";
+        syncBadge.style.borderColor = "var(--cad-green)";
+        syncBadge.style.color = "var(--cad-green)";
+      }
+
+      window._fbActive = true;
+      const badgeError = (msg) => {
+        const b = document.getElementById('syncStatus');
+        if (b) { b.textContent = msg; b.style.borderColor = "var(--acc)"; b.style.color = "var(--acc)"; }
+      };
+
+      window._firebaseUpsert = async function(sessionId, gameData) {
+        try {
+          await setDoc(doc(db, "cad_mission_results", sessionId), {
+            ...gameData,
+            sessionId,
+            waktuKirim: serverTimestamp()
+          }, { merge: true });
+        } catch (err) {
+          console.error("Gagal sinkronisasi ke Firestore:", err);
+          badgeError("🔴 Gagal kirim (cek aturan Firestore)");
+        }
+      };
+
+      window._firebaseClearAll = async function() {
+        try {
+          const snap = await getDocs(collection(db, "cad_mission_results"));
+          const deletes = [];
+          snap.forEach((d) => deletes.push(deleteDoc(doc(db, "cad_mission_results", d.id))));
+          await Promise.all(deletes);
+        } catch (err) {
+          console.error("Gagal menghapus data Firestore:", err);
+        }
+      };
+
+      window._firebaseListen = function(callback) {
+        const q = query(collection(db, "cad_mission_results"), orderBy("skor", "desc"));
+        return onSnapshot(q, (snapshot) => {
+          const results = [];
+          snapshot.forEach((d) => results.push({ id: d.id, ...d.data() }));
+          callback(results);
+        }, (err) => {
+          console.error("Gagal membaca Firestore:", err);
+          badgeError("🔴 Gagal baca (cek aturan Firestore)");
+        });
+      };
+    } catch (e) {
+      console.warn("Firebase tidak aktif, memakai penyimpanan lokal:", e);
+      window._fbActive = false;
+    }
+  }
+  window._fbResolve();
+</script>
+
+<script>
+const C=[
+{g:1,n:'LINE',a:'L',f:'Menggambar garis lurus dari titik awal ke titik akhir.',i:'<path d="M6 26 26 6"/><rect x="3" y="24" width="4" height="4"/><rect x="25" y="4" width="4" height="4"/>'},
+{g:1,n:'POLYLINE',a:'PL',f:'Menggambar rangkaian garis dan busur yang tersambung menjadi satu objek.',i:'<path d="M4 24l7-14 7 10 10-14"/>'},
+{g:1,n:'CIRCLE',a:'C',f:'Menggambar lingkaran dari titik pusat dan jari-jari atau diameter.',i:'<circle cx="16" cy="16" r="11"/><path d="M16 14v4M14 16h4"/>'},
+{g:1,n:'ARC',a:'A',f:'Menggambar busur, yaitu sebagian dari keliling lingkaran.',i:'<path d="M5 25C8 6 24 6 27 25"/>'},
+{g:1,n:'RECTANGLE',a:'REC',x:['RECTANG'],f:'Menggambar persegi panjang dengan dua titik sudut yang berhadapan.',i:'<rect x="5" y="9" width="22" height="14"/>'},
+{g:2,n:'MOVE',a:'M',f:'Memindahkan objek ke posisi lain tanpa mengubah ukurannya.',i:'<path d="M16 4v24M4 16h24M16 4l-3 3M16 4l3 3M16 28l-3-3M16 28l3-3M4 16l3-3M4 16l3 3M28 16l-3-3M28 16l-3 3"/>'},
+{g:2,n:'COPY',a:'CO',x:['CP'],f:'Menggandakan objek ke posisi baru, sedangkan objek asli tetap ada.',i:'<rect x="4" y="10" width="15" height="15"/><rect x="13" y="5" width="15" height="15" stroke-dasharray="3 2"/>'},
+{g:2,n:'ROTATE',a:'RO',f:'Memutar objek terhadap titik dasar dengan sudut tertentu.',i:'<path d="M26 16a10 10 0 1 1-3-7.2"/><path d="M24 3v6h-6"/>'},
+{g:2,n:'MIRROR',a:'MI',f:'Membuat bayangan cermin objek terhadap sumbu simetri.',i:'<path d="M16 3v26" stroke-dasharray="3 2"/><path d="M4 24 12 8v16zM28 24 20 8v16z"/>'},
+{g:2,n:'SCALE',a:'SC',f:'Memperbesar atau memperkecil objek dengan faktor skala tertentu.',i:'<rect x="4" y="18" width="10" height="10"/><rect x="12" y="4" width="16" height="16" stroke-dasharray="3 2"/><path d="M10 22 24 8"/>'},
+{g:3,n:'TRIM',a:'TR',f:'Memotong bagian objek yang melewati batas objek lain.',i:'<path d="M16 3v26M4 16h12"/><path d="M20 16h8" stroke-dasharray="2 3"/>'},
+{g:3,n:'EXTEND',a:'EX',f:'Memperpanjang objek hingga menyentuh batas objek lain.',i:'<path d="M26 4v24M4 16h14"/><path d="M18 16h8" stroke-dasharray="2 3"/>'},
+{g:3,n:'OFFSET',a:'O',f:'Membuat salinan objek yang sejajar dengan jarak tertentu.',i:'<path d="M5 22 22 5M10 27 27 10"/>'},
+{g:3,n:'FILLET',a:'F',f:'Menyambung dua objek pada sudutnya, dapat dengan sudut bulat berjari-jari tertentu.',i:'<path d="M6 6v14a6 6 0 0 0 6 6h14"/>'},
+{g:3,n:'STRETCH',a:'S',f:'Menarik sebagian objek dengan memilih titik ujungnya memakai jendela silang (crossing).',i:'<rect x="4" y="10" width="12" height="12"/><path d="M16 16h12M24 12l4 4-4 4"/>'}
+];
+
+const LB=['Command Explorer','Choose Your Step','Drawing Master'];
+const CAT_LB=['Dasar Menggambar','Modifikasi Objek','Modifikasi Lanjutan'];
+
+const M2=[
+{
+  p:'Urutkan langkah-langkah yang tepat untuk membuat objek lingkaran dengan perintah CIRCLE:',
+  l:['Menentukan titik pusat lingkaran (center point).','Menjalankan perintah CIRCLE.','Memasukkan nilai jari-jari (radius) atau diameter lingkaran.','Memastikan command line siap menerima instruksi.'],
+  o:['1 – 2 – 4 – 3','2 – 4 – 1 – 3','2 – 1 – 3 – 4','4 – 1 – 2 – 3'],
+  k:1,
+  e:'Jalankan CIRCLE, pastikan command line siap, tentukan titik pusat, lalu masukkan jari-jari atau diameter.'
+},
+{
+  p:'Urutkan prosedur yang benar dalam menyalin objek menggunakan perintah COPY:',
+  l:['Menentukan titik acuan awal (base point).','Memilih objek (select object) yang akan disalin.','Menjalankan perintah COPY.','Menentukan lokasi tujuan (second point/destination).'],
+  o:['3 – 2 – 1 – 4','2 – 3 – 4 – 1','1 – 2 – 3 – 4','3 – 1 – 2 – 4'],
+  k:0,
+  e:'Jalankan COPY, pilih objek, tentukan base point, lalu tentukan titik tujuan salinan.'
+},
+{
+  p:'Urutkan langkah-langkah memotong garis yang saling bersilangan menggunakan perintah TRIM:',
+  l:['Memilih segmen garis yang ingin dipotong/dibuang.','Menjalankan perintah TRIM.','Menekan tombol Enter atau Spacebar untuk mengaktifkan batas potong otomatis.','Mengakhiri perintah dengan menekan Esc atau Enter.'],
+  o:['2 – 1 – 3 – 4','1 – 4 – 2 – 3','2 – 3 – 1 – 4','3 – 2 – 1 – 4'],
+  k:2,
+  e:'Jalankan TRIM, tekan Enter/Spasi agar semua objek menjadi batas potong, klik segmen yang dibuang, lalu akhiri dengan Esc/Enter.'
+},
+{
+  p:'Urutkan prosedur untuk membuat garis sejajar dengan jarak tertentu menggunakan perintah OFFSET:',
+  l:['Memilih objek yang akan di-offset.','Menentukan arah/sisi hasil offset dengan mengklik area pada layar.','Menjalankan perintah OFFSET.','Memasukkan nilai jarak offset lalu tekan Enter.'],
+  o:['3 – 1 – 4 – 2','1 – 4 – 3 – 2','3 – 4 – 1 – 2','4 – 3 – 1 – 2'],
+  k:2,
+  e:'Jalankan OFFSET, masukkan jarak, pilih objek, lalu klik sisi tempat hasil offset diletakkan.'
+},
+{
+  p:'Urutkan langkah-langkah memindahkan lokasi objek menggunakan perintah MOVE:',
+  l:['Menentukan titik acuan pemindahan (base point).','Menjalankan perintah MOVE.','Menentukan lokasi tujuan pemindahan (displacement point).','Memilih objek (select object) yang akan dipindahkan lalu tekan Enter.'],
+  o:['2 – 4 – 1 – 3','4 – 1 – 2 – 3','2 – 1 – 4 – 3','1 – 2 – 4 – 3'],
+  k:0,
+  e:'Jalankan MOVE, pilih objek lalu Enter, tentukan base point, kemudian titik tujuan pemindahan.'
+}
+].map(q=>({...q,z:'Urutan langkah kerja yang tepat adalah…'}));
+
+const M3=[
+{
+  p:'<b>Analisis kesalahan penggunaan perintah.</b> Seorang siswa membuat garis dinding menggunakan perintah OFFSET dengan jarak 15 cm. Namun, hasil garis sejajar yang terbentuk justru berada di sisi yang tidak sesuai dengan rancangan denah.',
+  z:'Apa tindakan paling tepat untuk mengatasi permasalahan tersebut?',
+  o:[
+    'Menggunakan ERASE untuk menghapus garis yang tidak sesuai dengan rancangan.',
+    'Mengulangi perintah OFFSET, memilih objek, lalu menentukan sisi sesuai arah yang diinginkan.',
+    'Menggunakan MOVE untuk menggeser garis hasil OFFSET ke posisi yang sesuai.',
+    'Menggunakan TRIM untuk memotong bagian garis yang tidak sesuai dengan rancangan.'
+  ],
+  k:1,
+  e:'Arah OFFSET ditentukan oleh klik sisi. Cukup ulangi perintahnya dan klik sisi yang benar; menghapus, memindahkan, atau memotong tidak menyelesaikan akar masalahnya.'
+},
+{
+  p:'<b>Analisis permasalahan objek.</b> Seorang siswa menggunakan perintah LINE untuk membuat empat sisi ruangan. Setelah selesai, ternyata terdapat celah kecil antara garis pertama dan garis terakhir sehingga bentuk ruangan belum tertutup sempurna.',
+  z:'Apa solusi paling tepat untuk memperbaikinya?',
+  o:[
+    'Menggunakan COPY untuk menggandakan garis yang belum terhubung.',
+    'Menggunakan OFFSET untuk membuat garis baru pada bagian yang terbuka.',
+    'Menggunakan LINE untuk menghubungkan kedua ujung garis yang belum bertemu.',
+    'Menggunakan SCALE untuk menyesuaikan ukuran keseluruhan objek ruangan.'
+  ],
+  k:2,
+  e:'Celah ditutup dengan menyambung kedua ujung garis memakai LINE (gunakan Object Snap agar tepat di titik ujung).'
+},
+{
+  p:'<b>Evaluasi hasil penggambaran.</b> Seorang siswa ingin menggandakan beberapa objek kursi pada denah ruang rapat menggunakan perintah COPY. Namun, posisi kursi hasil salinan memiliki jarak yang tidak konsisten.',
+  z:'Apa penyebab paling mungkin dari permasalahan tersebut?',
+  o:[
+    'Ukuran objek terlalu kecil sehingga memengaruhi ketepatan posisi salinan.',
+    'Penentuan titik dasar dan titik penempatan salinan kurang tepat sehingga jaraknya tidak konsisten.',
+    'Objek belum dipotong menggunakan TRIM sehingga memengaruhi posisi hasil salinan.',
+    'Warna objek berbeda sehingga memengaruhi ketepatan penempatan hasil salinan.'
+  ],
+  k:1,
+  e:'Jarak hasil COPY ditentukan oleh base point dan titik penempatan. Jika keduanya kurang tepat, jarak antarsalinan jadi tidak konsisten.'
+},
+{
+  p:'<b>Pemecahan masalah gambar.</b> Dalam proses menggambar denah, terdapat dua garis dinding yang saling berpotongan dan menyisakan bagian garis yang melewati batas sudut. Siswa ingin menghasilkan sudut yang rapi tanpa menggambar ulang keseluruhan objek.',
+  z:'Perintah dan tindakan yang paling tepat adalah…',
+  o:[
+    'EXTEND, kemudian memperpanjang garis hingga mencapai batas pertemuan sudut.',
+    'TRIM, kemudian menghapus bagian garis yang melewati batas pertemuan sudut.',
+    'COPY, kemudian menggandakan garis untuk menyesuaikan bentuk pertemuan sudut.',
+    'ROTATE, kemudian memutar garis untuk menyesuaikan arah pertemuan sudut.'
+  ],
+  k:1,
+  e:'Kelebihan garis di luar sudut dibuang dengan TRIM, tanpa menggambar ulang.'
+},
+{
+  p:'<b>Analisis strategi penggambaran.</b> Seorang siswa diminta menggambar denah kamar tidur yang memiliki dua meja dengan bentuk dan ukuran sama, tetapi berada pada posisi berbeda. Siswa sudah menyelesaikan satu objek meja.',
+  z:'Strategi paling efisien untuk menyelesaikan pekerjaan tersebut adalah…',
+  o:[
+    'Menggunakan LINE dan RECTANGLE untuk membuat meja kedua dengan bentuk serupa.',
+    'Menggunakan OFFSET untuk menghasilkan objek meja kedua dengan jarak tertentu.',
+    'Menggunakan COPY untuk menggandakan objek meja ke posisi yang berbeda.',
+    'Menggunakan SCALE untuk mengubah ukuran objek meja sebelum ditempatkan.'
+  ],
+  k:2,
+  e:'Objek yang sama bentuk dan ukurannya cukup digandakan dengan COPY lalu ditempatkan di posisi baru, lebih cepat daripada menggambar ulang.'
+}
+];
+
+const $=s=>document.querySelector(s),app=$('#app'),sh=a=>[...a].sort(()=>Math.random()-.5);
+const ico=c=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${c.i}</svg>`;
+let S=null,tm,snd=true,ac;
+
+const DEVELOPER_PASSWORD = "admin123";
+
+// =========================================================================
+// PENYIMPANAN PROGRES: refresh / tutup tab / keluar lalu balik -> lanjut di posisi terakhir
+// =========================================================================
+const PROG_KEY  = 'cad_mission_progress_v1';
+const ENTER_KEY = 'cad_mission_entered_v1';
+
+function saveProgress(){
+  if(!S) return;
+  try{
+    S.elapsed = (S.final != null) ? S.final : (Date.now() - S.t0);
+    localStorage.setItem(PROG_KEY, JSON.stringify(S));
+  }catch(e){}
+}
+function clearProgress(){
+  try{ localStorage.removeItem(PROG_KEY); }catch(e){}
+}
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(PROG_KEY);
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    if(!d || !d.sessionId || !d.name || !d.view || !d.view.type || !Array.isArray(d.st)){
+      clearProgress();
+      return null;
+    }
+    return d;
+  }catch(e){
+    clearProgress();
+    return null;
+  }
+}
+function updateExit(){
+  const b = $('#exitBtn');
+  if(b) b.style.display = (S && S.view && S.view.type !== 'result') ? '' : 'none';
+}
+function setView(v){
+  if(!S) return;
+  S.view = v;
+  saveProgress();
+  updateExit();
+}
+// simpan juga saat tab disembunyikan / ditutup
+window.addEventListener('pagehide', saveProgress);
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden') saveProgress();
+});
+
+function beep(type){
+  if(!snd)return;
+  try{
+    ac=ac||new AudioContext();
+    const now=ac.currentTime;
+    if(type==='ok'){
+      [587.33, 880].forEach((freq,idx)=>{
+        const o=ac.createOscillator(),g=ac.createGain();
+        o.type='triangle';
+        o.frequency.setValueAtTime(freq, now+idx*0.08);
+        g.gain.setValueAtTime(0.07, now+idx*0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, now+idx*0.08+0.18);
+        o.connect(g);g.connect(ac.destination);
+        o.start(now+idx*0.08);o.stop(now+idx*0.08+0.19);
+      });
+    } else if(type==='bad'){
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(190, now);
+      o.frequency.linearRampToValueAtTime(130, now+0.22);
+      g.gain.setValueAtTime(0.06, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now+0.24);
+      o.connect(g);g.connect(ac.destination);
+      o.start(now);o.stop(now+0.25);
+    } else {
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.frequency.value=520;
+      g.gain.value=0.03;
+      o.connect(g);g.connect(ac.destination);
+      o.start(now);o.stop(now+0.05);
+    }
+  }catch(e){}
+}
+
+function flashPanel(type){
+  const p = app.querySelector('.panel');
+  if(!p) return;
+  p.classList.remove('flash-ok', 'flash-bad');
+  void p.offsetWidth;
+  p.classList.add(type === 'ok' ? 'flash-ok' : 'flash-bad');
+  setTimeout(()=>p.classList.remove('flash-ok', 'flash-bad'), 650);
+}
+
+$('#sn').onclick=()=>{snd=!snd;$('#sn').textContent=snd?'🔊':'🔇'};
+function hud(){$('#sc').textContent=S?S.score:0;$('#st').textContent=S?S.streak+(S.streak>=3?' ×2':''):0;updateExit()}
+$('#exitBtn').onclick=()=>{
+  if(!S) return;
+  if(confirm('Keluar dari misi? Progres yang tersimpan akan dihapus dan kamu kembali ke lobi.')){
+    morphNavigate(home);
+  }
+};
+function clock(){clearInterval(tm);tm=setInterval(()=>{if(!S)return;const s=Math.floor((Date.now()-S.t0)/1000);$('#tm').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500)}
+
+function buildSyncPayload(isFinished = false) {
+  if (!S) return null;
+  const t = Math.floor(((S.final != null) ? S.final : (Date.now() - S.t0)) / 1000);
+  const totalJawaban = S.right + S.wrong;
+  const a = totalJawaban > 0 ? Math.round((S.right / totalJawaban) * 100) : 0;
+  const rk = isFinished
+    ? (a >= 90 ? 'Master Drafter' : a >= 70 ? 'Senior Drafter' : a >= 50 ? 'Junior Drafter' : 'Trainee Drafter')
+    : (LB[(S.cur || 1) - 1] || 'Command Explorer');
+
+  return {
+    nama: S.name,
+    skor: S.score,
+    akurasi: a,
+    pangkat: rk,
+    status: isFinished ? 'Selesai' : 'Sedang Bermain',
+    misiAktif: isFinished ? 'Semua Misi Selesai' : (LB[(S.cur || 1) - 1] || 'Command Explorer'),
+    durasiDetik: t
+  };
+}
+
+function pts(ok,v){
+  if(ok){S.right++;S.streak++;S.score+=v*(S.streak>=3?2:1)}
+  else{S.wrong++;S.streak=0;S.score=Math.max(0,S.score-20)}
+  S.st[S.cur-1][ok?0:1]++;
+  hud();
+  if (S && S.sessionId) {
+    window.syncStudentSession(S.sessionId, buildSyncPayload(false));
+  }
+  saveProgress();
+}
+
+const steps=n=>`<div class="steps">${LB.map((t,i)=>`<span class="${i+1==n?'on':i+1<n?'dn':''}">${t}</span>`).join('')}</div>`;
+function stage(n){
+  S.cur=n;
+  S.st[n-1]=S.st[n-1]||[0,0];
+  if (S && S.sessionId) {
+    window.syncStudentSession(S.sessionId, buildSyncPayload(false));
+  }
+}
+const cards=()=>CAT_LB.map((t,k)=>`<h3>${t}</h3><div class="cg">${C.filter(c=>c.g==k+1).map(c=>`<div class="cd">${ico(c)}<div><b class="mono">${c.n}</b> <span class="al mono">${c.a}</span><p>${c.f}</p></div></div>`).join('')}</div>`).join('');
+
+function morphNavigate(renderCallback) {
+  const panel = app.querySelector('.panel');
+  if(panel) {
+    panel.classList.add('morphing');
+    setTimeout(() => {
+      renderCallback();
+      const newPanel = app.querySelector('.panel');
+      if(newPanel) {
+        newPanel.classList.add('morphing');
+        requestAnimationFrame(() => {
+          newPanel.classList.remove('morphing');
+        });
+      }
+    }, 280);
+  } else {
+    renderCallback();
+  }
+}
+
+// 1. TAMPILAN AWAL (WELCOME SCREEN) - Tanpa Header Bar
+function showWelcomeScreen() {
+  clearInterval(tm);
+  S=null;
+  hud();
+  $('#tm').textContent='00:00';
+  $('#mainHeader').classList.add('hidden-header');
+
+  app.innerHTML = `
+    <section class="panel">
+      <div class="splash-content">
+        <div style="font-size:48px; margin-bottom:12px;">📐</div>
+        <div class="splash-title">SELAMAT DATANG DI <span>CADMISSION</span></div>
+        <div class="splash-subtitle">Platform edukasi interaktif berbasis web untuk menguasai perintah dasar, modifikasi, dan pemecahan masalah teknis AutoCAD 2D.</div>
+        <button class="pulse-btn" id="startPortalBtn">KETUK UNTUK MELANJUTKAN ➔</button>
+      </div>
+    </section>
+  `;
+
+  $('#startPortalBtn').onclick = () => {
+    beep('click');
+    try{ localStorage.setItem(ENTER_KEY,'1'); }catch(e){}
+    $('#mainHeader').classList.remove('hidden-header');
+    morphNavigate(home);
+  };
+}
+
+function begin(m){
+  const inputEl = $('#nm');
+  const nameVal = inputEl ? inputEl.value.trim() : '';
+  if (!nameVal) {
+    alert('Silakan masukkan Nama Drafter / Siswa terlebih dahulu sebelum memulai!');
+    if (inputEl) inputEl.focus();
+    return;
+  }
+
+  const sessionId = 'siswa_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+  S = {
+    sessionId,
+    score: 0,
+    streak: 0,
+    right: 0,
+    wrong: 0,
+    t0: Date.now(),
+    name: nameVal,
+    cur: 1,
+    hintsLeft: 2,
+    st: [[0,0],[0,0],[0,0]],
+    final: null,
+    view: null
+  };
+
+  window.syncStudentSession(S.sessionId, buildSyncPayload(false));
+
+  hud();
+  clock();
+  saveProgress();
+  m==1?P1():m==2?intro(2,toM2Quiz):intro(3,toM3Quiz);
+}
+
+// 2. LOBI UTAMA (LOBBY SCREEN)
+function home(){
+  clearInterval(tm);
+  S=null;
+  clearProgress();
+  hud();
+  $('#tm').textContent='00:00';
+
+  app.innerHTML=`<section class="panel"><h1>📐 CADMISSION – Lobi Utama</h1><p class="mut">Halo, Drafter! Masukkan namamu untuk langsung terhubung ke Leaderboard & Dashboard Guru.</p>
+  <div class="strip">${C.map(ico).join('')}</div>
+  <div class="mc"><div><b>Command Explorer</b><small>Mengenal ikon, fungsi, dan mengetikkan perintah command line AutoCAD.</small></div><div><b>Choose Your Step</b><small>Prosedur dan urutan eksekusi komando AutoCAD yang tepat.</small></div><div><b>Drawing Master</b><small>Solusi teknis saat penyusunan denah arsitektur.</small></div></div>
+  
+  <div style="margin: 16px 0;">
+     <input id="nm" placeholder="Masukkan Nama Drafter / Siswa (Wajib)" maxlength="24" style="width:100%;">
+  </div>
+  
+  <div class="row">
+     <button class="btn" id="go" style="flex:2;">▶ Mulai Misi Sekarang</button>
+     <button class="btn ghost" id="lr" style="flex:1;">📖 Kamus CAD</button>
+  </div>
+
+  <h3>🏆 Live Leaderboard (Top 3)</h3>
+  <div id="lobbyPodium" class="podium-box">
+    <div class="podium-card"><b>#1</b><span>Belum ada data</span></div>
+    <div class="podium-card"><b>#2</b><span>Belum ada data</span></div>
+    <div class="podium-card"><b>#3</b><span>Belum ada data</span></div>
+  </div>
+
+  <div class="row">
+     <button class="btn ghost" id="devDash" style="width:100%; border-color:var(--cad-cyan); color:var(--cad-cyan);">🔐 Masuk sebagai Guru / Pengawas (Dashboard)</button>
+  </div>
+  <div class="row" style="margin-top:10px;">
+     <button class="btn ghost" id="backWelcome" style="width:100%; font-size:12px;">← Kembali ke Halaman Selamat Datang</button>
+  </div>
+  </section>`;
+
+  window.listenToStudentResults((data) => {
+    const podium = document.getElementById('lobbyPodium');
+    if (!podium) return;
+    let html = '';
+    for (let i = 0; i < 3; i++) {
+      if (data[i]) {
+        html += `<div class="podium-card"><b>#${i+1} ${data[i].nama}</b><span>${data[i].skor} Poin · ${data[i].status || 'Aktif'}</span></div>`;
+      } else {
+        html += `<div class="podium-card"><b>#${i+1}</b><span>Kosong</span></div>`;
+      }
+    }
+    podium.innerHTML = html;
+  });
+
+  $('#go').onclick=()=>{
+    const nameVal = $('#nm').value.trim();
+    if (!nameVal) {
+      alert('Silakan masukkan Nama Drafter / Siswa terlebih dahulu!');
+      $('#nm').focus();
+      return;
+    }
+    beep('click');
+    morphNavigate(()=>begin(1));
+  };
+  $('#nm').onkeydown=(e)=>{if(e.key==='Enter')$('#go').click()};
+
+  $('#lr').onclick=()=>morphNavigate(()=>{
+    app.innerHTML=`<section class="panel"><h2>📖 Kamus Perintah AutoCAD 2D</h2><p class="mut">Pelajari ikon, nama, alias, dan fungsinya sebelum bermain.</p>${cards()}<div class="row"><button class="btn" id="bk">← Kembali ke Lobi</button></div></section>`;
+    $('#bk').onclick=()=>morphNavigate(home);
+  });
+  
+  $('#backWelcome').onclick = () => {
+    try{ localStorage.removeItem(ENTER_KEY); }catch(e){}
+    $('#mainHeader').classList.add('hidden-header');
+    morphNavigate(showWelcomeScreen);
+  };
+ 
+  $('#devDash').onclick = () => {
+     const inputPass = prompt("🔐 Verifikasi Peran: Masukkan password khusus Guru/Pengawas:");
+     if (inputPass === DEVELOPER_PASSWORD) {
+         morphNavigate(renderDeveloperDashboard);
+     } else if (inputPass !== null) {
+         alert("❌ Password salah! Akses pengawas ditolak.");
+     }
+  };
+}
+
+function intro(n,next){
+  stage(n);
+  setView({type:'intro',n});
+  const title = n==2 ? 'Choose Your Step' : 'Drawing Master';
+  app.innerHTML=`<section class="panel">${steps(n)}<h1>🧩 ${title}</h1><div class="mc"><div><b>Tujuan</b><small>${n==2?'Memahami urutan langkah kerja yang benar saat menjalankan perintah AutoCAD.':'Menerapkan perintah AutoCAD untuk menyelesaikan masalah nyata pada gambar denah.'}</small></div><div><b>Cara bermain</b><small>Ketuk salah satu pilihan jawaban (A–D), lalu tekan tombol <b>“Pilih Jawaban”</b> untuk memverifikasi. Setiap soal memiliki <b>2 kesempatan</b>.</small></div></div><div class="row"><button class="btn" id="ps">▶ Mulai Misi</button></div></section>`;
+  $('#ps').onclick=()=>{beep('click');morphNavigate(next)};
+}
+
+function matchRound(o,rs){
+  let sel=null,d=0;
+  const n=o.items.length;
+  stage(o.lv);
+  app.innerHTML=`<section class="panel">${steps(o.lv)}<h2>${o.t}</h2><p class="mut">${o.s}</p><div class="mg"><div class="col">${sh(o.items).map(c=>`<div class="m l" draggable="true" data-k="${c.n}">${o.l(c)}</div>`).join('')}</div><div class="col">${sh(o.items).map(c=>`<div class="m r" data-k="${c.n}">${o.r(c)}</div>`).join('')}</div></div><div class="prog"><i id="pb"></i></div></section>`;
+  const q=(k,s)=>app.querySelector(`.${s}[data-k="${k}"]`);
+  function tryM(a,b){
+    if(a==b){
+      ['l','r'].forEach(s=>{const e=q(a,s);e.classList.remove('sel');e.classList.add('ok')});
+      sel=null;pts(1,100);beep('ok');flashPanel('ok');
+      S.view.matched.push(a);saveProgress();
+      $('#pb').style.width=(++d/n*100)+'%';
+      if(d==n)setTimeout(()=>{ if(S) o.next(); },700);
+    } else {
+      const e=q(b,'r');
+      e.classList.add('bad');
+      setTimeout(()=>e.classList.remove('bad'),500);
+      pts(0);beep('bad');flashPanel('bad');
+    }
+  }
+  // pulihkan pasangan yang sudah benar bila halaman dimuat ulang
+  const done = (rs && Array.isArray(rs.matched)) ? rs.matched.filter(k=>o.items.some(c=>c.n===k)) : [];
+  setView({type:'match',round:o.round,matched:done.slice()});
+  done.forEach(k=>['l','r'].forEach(s=>{const e=q(k,s);if(e){e.classList.remove('sel');e.classList.add('ok')}}));
+  d=done.length;
+  $('#pb').style.width=(d/n*100)+'%';
+  if(d>=n){ setTimeout(()=>{ if(S) o.next(); },300); return; }
+
+  app.querySelectorAll('.l').forEach(e=>{
+    e.onclick=()=>{beep('click');app.querySelectorAll('.l.sel').forEach(x=>x.classList.remove('sel'));e.classList.add('sel');sel=e.dataset.k};
+    e.ondragstart=ev=>{ev.dataTransfer.setData('text/plain',e.dataset.k);sel=e.dataset.k};
+  });
+  app.querySelectorAll('.r').forEach(e=>{
+    e.onclick=()=>{if(sel)tryM(sel,e.dataset.k)};
+    e.ondragover=ev=>ev.preventDefault();
+    e.ondrop=ev=>{ev.preventDefault();const k=ev.dataTransfer.getData('text/plain');if(k)tryM(k,e.dataset.k)};
+  });
+}
+
+const G=g=>C.filter(c=>c.g==g);
+
+const P1=(rs)=>matchRound({
+  lv:1,
+  round:1,
+  t:'Command Explorer (1/3)',
+  s:'Ketuk ikon perintah di kiri, lalu pilih nama perintah yang tepat di kanan.',
+  items:G(1),
+  l:ico,
+  r:c=>`<b class="mono">${c.n}</b>`,
+  next:()=>morphNavigate(P2)
+},rs);
+
+const P2=(rs)=>matchRound({
+  lv:1,
+  round:2,
+  t:'Command Explorer (2/3)',
+  s:'Pilih perintah di kiri, lalu ketuk fungsi yang sesuai di kanan.',
+  items:G(2),
+  l:c=>`<span class="mini">${ico(c)}</span><b class="mono">${c.n}</b>`,
+  r:c=>c.f,
+  next:()=>morphNavigate(toTyped)
+},rs);
+
+// Alur antar bagian (dipakai juga saat melanjutkan progres)
+const SUB2='Pilih urutan langkah yang paling tepat (A–D).';
+const SUB3='Pilih tindakan atau solusi yang paling tepat.';
+const toM3Quiz=()=>quiz(3,M3,SUB3,result);
+const toM3Intro=()=>morphNavigate(()=>intro(3,toM3Quiz));
+const toM2Quiz=()=>quiz(2,M2,SUB2,toM3Intro);
+const toM2Intro=()=>morphNavigate(()=>intro(2,toM2Quiz));
+const toTyped=()=>typed(G(3),toM2Intro);
+
+function scene(cv,n,t){
+  const c=cv.getContext('2d'),W=360,H=220;
+  c.setTransform(1,0,0,1,0,0);
+  c.globalAlpha=1;
+  c.setLineDash([]);
+  c.fillStyle='#05070a';
+  c.fillRect(0,0,W,H);
+  
+  c.strokeStyle='rgba(0, 240, 255, 0.08)';
+  c.lineWidth=1;
+  for(let x=0;x<W;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke()}
+  for(let y=0;y<H;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+ 
+  c.lineWidth=2.5;
+  c.strokeStyle='#00f0ff';
+  const L=(a,b,d,e)=>{c.beginPath();c.moveTo(a,b);c.lineTo(d,e);c.stroke()};
+  if(n=='TRIM'){L(180,30,180,190);L(60,110,180,110);c.globalAlpha=1-t;c.strokeStyle='#ff4d5e';L(180,110,300,110)}
+  if(n=='EXTEND'){L(290,30,290,190);L(60,110,180,110);c.strokeStyle='#ffd166';L(180,110,180+110*t,110)}
+  if(n=='OFFSET'){L(60,170,280,80);c.translate(-15*t,-37*t);c.strokeStyle='#ffd166';L(60,170,280,80)}
+  if(n=='FILLET'){const r=50*t;c.beginPath();c.moveTo(120,40);c.lineTo(120,160-r);c.arcTo(120,160,120+r,160,r);c.lineTo(300,160);c.stroke()}
+  if(n=='STRETCH'){c.strokeRect(60,70,120+110*t,80);c.setLineDash([6,4]);c.strokeStyle='#00e676';c.globalAlpha=1-.6*t;c.strokeRect(150,52,90,116)}
+  c.globalAlpha=1
+}
+function anim(cv,n){let s=null;const f=ts=>{s=s||ts;const t=Math.min(1,(ts-s)/1000);scene(cv,n,t);if(t<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+
+function typed(items,next,rs){
+  const Q=(rs && Array.isArray(rs.order)) ? rs.order.map(nm=>items.find(c=>c.n===nm)).filter(Boolean) : sh(items);
+  let i=(rs && Q.length) ? Math.min(rs.i||0, Q.length-1) : 0;
+  let rq=rs||null;
+  stage(1);
+
+  function show(){
+    const c=Q[i];
+    let fails=0, fin=0, hintedThisQ=0, res=null;
+    const rsq=rq; rq=null;
+    if(rsq){ fails=rsq.fails||0; fin=rsq.fin?1:0; hintedThisQ=rsq.hinted?1:0; res=rsq.res||null; }
+    const order=Q.map(x=>x.n);
+    const saveView=()=>setView({type:'typed',order,i,fails,fin,hinted:hintedThisQ,res});
+
+    app.innerHTML=`<section class="panel">${steps(1)}
+      <h2>Command Explorer (3/3)</h2>
+      <div class="attempt-badge" id="attBadge">🎯 Kesempatan: 2 tersisa · 💡 Sisa Bantuan: ${S.hintsLeft}</div>
+      <p class="mut">Soal ${i+1} dari ${Q.length} – ketik nama perintah atau alias-nya di command line, lalu tekan Enter.</p>
+      <div class="q">“${c.f}”</div>
+      <canvas id="cv" width="360" height="220"></canvas>
+      <div class="cmd"><span class="mono">Command:</span><input id="in" class="mono" autocomplete="off" spellcheck="false" placeholder="Ketik perintah (mis. TRIM)"><button class="btn" id="en">Enter</button></div>
+      <div class="fb" id="fb"></div>
+      <div class="row" id="actionRow">
+        <button class="btn ghost" id="hn" ${S.hintsLeft<=0?'disabled':''}>💡 Gunakan Bantuan (−30) [${S.hintsLeft}/2]</button>
+      </div>
+    </section>`;
+
+    const cv=$('#cv'), inp=$('#in'), fb=$('#fb'), hnBtn=$('#hn'), attBadge=$('#attBadge'), actionRow=$('#actionRow');
+    scene(cv,c.n,0);
+    inp.focus();
+
+    const updateBadge = () => {
+      const rem = Math.max(0, 2 - fails);
+      attBadge.innerHTML = `🎯 Kesempatan: ${rem} tersisa · 💡 Sisa Bantuan: ${S.hintsLeft}`;
+    };
+
+    const showNextButton = () => {
+      actionRow.innerHTML = `<button class="btn" id="nx">${i==Q.length-1?'Lanjut ke Choose Your Step':'Soal Berikutnya'} →</button>`;
+      $('#nx').onclick = () => {
+        beep('click');
+        morphNavigate(() => {
+          i++;
+          i == Q.length ? next() : show();
+        });
+      };
+    };
+
+    const useHint = () => {
+      if(fin || hintedThisQ || S.hintsLeft <= 0) return;
+      hintedThisQ = 1;
+      S.hintsLeft--;
+      S.score = Math.max(0, S.score - 30);
+      hud();
+      if(S && S.sessionId) window.syncStudentSession(S.sessionId, buildSyncPayload(false));
+      saveView();
+      beep('click');
+
+      hnBtn.disabled = true;
+      hnBtn.textContent = `💡 Bantuan Terpakai [${S.hintsLeft}/2]`;
+      updateBadge();
+
+      fb.innerHTML = `<div class="fb-card hint">💡 <b>Petunjuk:</b> Perintah diawali huruf <b class="mono">“${c.n[0]}”</b> (${c.n.length} huruf), dan alias-nya diawali <b class="mono">“${c.a[0]}”</b>.</div>`;
+      inp.focus();
+    };
+
+    const go = () => {
+      if(fin) return;
+      const v = inp.value.trim().toUpperCase();
+      if(!v) return;
+
+      if(v == c.n || v == c.a || (c.x||[]).includes(v)){
+        fin = 1;
+        pts(1, fails === 0 ? 150 : 75);
+        res = 'ok';
+        saveView();
+        beep('ok');
+        flashPanel('ok');
+        inp.disabled = true;
+        $('#en').disabled = true;
+        inp.classList.add('okk');
+        fb.innerHTML = `<div class="fb-card ok">✔ <b>Luar Biasa!</b> Perintah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>) tepat! Perhatikan simulasi perintah pada layar kerja di atas.</div>`;
+        anim(cv, c.n);
+        showNextButton();
+      } else {
+        pts(0);
+        fails++;
+        saveView();
+        beep('bad');
+        flashPanel('bad');
+        updateBadge();
+        inp.classList.add('bad');
+        setTimeout(()=>inp.classList.remove('bad'), 450);
+
+        if(fails === 1){
+          inp.value = '';
+          inp.focus();
+          fb.innerHTML = `<div class="fb-card bad">✖ <b>Kurang tepat!</b> Periksa kembali fungsi perintah yang diminta. Kamu masih memiliki <b>1 kesempatan</b> lagi.</div>`;
+        } else {
+          fin = 1;
+          res = 'fail';
+          saveView();
+          inp.disabled = true;
+          $('#en').disabled = true;
+          fb.innerHTML = `<div class="fb-card bad">✖ <b>Kesempatan habis!</b> Jawaban yang benar adalah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>). Silakan lanjut ke soal berikutnya.</div>`;
+          anim(cv, c.n);
+          showNextButton();
+        }
+      }
+    };
+
+    hnBtn.onclick = useHint;
+    $('#en').onclick = go;
+    inp.onkeydown = e => { if(e.key === 'Enter') go(); };
+
+    saveView();
+    // pulihkan keadaan soal ini bila halaman dimuat ulang
+    if(rsq){
+      if(hintedThisQ){
+        hnBtn.disabled = true;
+        hnBtn.textContent = `💡 Bantuan Terpakai [${S.hintsLeft}/2]`;
+        fb.innerHTML = `<div class="fb-card hint">💡 <b>Petunjuk:</b> Perintah diawali huruf <b class="mono">“${c.n[0]}”</b> (${c.n.length} huruf), dan alias-nya diawali <b class="mono">“${c.a[0]}”</b>.</div>`;
+      }
+      updateBadge();
+      if(fin){
+        inp.disabled = true;
+        $('#en').disabled = true;
+        if(res === 'ok'){
+          inp.value = c.n;
+          inp.classList.add('okk');
+          fb.innerHTML = `<div class="fb-card ok">✔ <b>Luar Biasa!</b> Perintah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>) tepat! Perhatikan simulasi perintah pada layar kerja di atas.</div>`;
+        } else {
+          fb.innerHTML = `<div class="fb-card bad">✖ <b>Kesempatan habis!</b> Jawaban yang benar adalah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>). Silakan lanjut ke soal berikutnya.</div>`;
+        }
+        scene(cv, c.n, 1);
+        showNextButton();
+      } else if(fails >= 1){
+        fb.innerHTML = `<div class="fb-card bad">✖ <b>Kurang tepat!</b> Periksa kembali fungsi perintah yang diminta. Kamu masih memiliki <b>1 kesempatan</b> lagi.</div>`;
+      }
+    }
+  }
+  show();
+}
+
+function quiz(n,Q,sub,next,rs){
+  let i=rs ? Math.min(rs.i||0, Q.length-1) : 0;
+  let rq=rs||null;
+  stage(n);
+
+  function show(){
+    const q=Q[i];
+    let tries=0, fin=0, selectedIdx=null, bad=[], res=null;
+    const rsq=rq; rq=null;
+    if(rsq){ tries=rsq.tries||0; fin=rsq.fin?1:0; bad=(rsq.bad||[]).slice(); res=rsq.res||null; }
+    const saveView=()=>setView({type:'quiz',n,i,tries,fin,bad:bad.slice(),res});
+
+    app.innerHTML=`<section class="panel">${steps(n)}
+      <h2>${n==2?'Choose Your Step':'Drawing Master'}</h2>
+      <div class="attempt-badge" id="qAttBadge">🎯 Kesempatan: 2 tersisa</div>
+      <p class="mut">Soal ${i+1} dari ${Q.length} – ${sub}</p>
+      <div class="q">${q.p}${q.l?'<ol>'+q.l.map((x,j)=>`<li value="${j+1}">${x}</li>`).join('')+'</ol>':''}<br><b>${q.z}</b></div>
+      <div class="col">${q.o.map((t,j)=>`<div class="m op" data-j="${j}"><b>${'ABCD'[j]}.</b><span>${t}</span></div>`).join('')}</div>
+      <div class="fb" id="fb"></div>
+      <div class="row" id="quizActionRow">
+        <button class="btn confirm-btn" id="verifyBtn" disabled>✔ Pilih Jawaban</button>
+      </div>
+      <div class="prog"><i style="width:${i/Q.length*100}%"></i></div>
+    </section>`;
+
+    const fb = h => $('#fb').innerHTML = h;
+    const verifyBtn = $('#verifyBtn');
+    const qAttBadge = $('#qAttBadge');
+    const quizActionRow = $('#quizActionRow');
+
+    const showNextQuizBtn = () => {
+      quizActionRow.innerHTML = `<button class="btn" id="nx">${i==Q.length-1?'Selesai & Lihat Hasil':'Soal Berikutnya'} →</button>`;
+      $('#nx').onclick = () => {
+        beep('click');
+        morphNavigate(() => {
+          i++;
+          i == Q.length ? next() : show();
+        });
+      };
+    };
+
+    app.querySelectorAll('.op').forEach(e => {
+      e.onclick = () => {
+        if(fin || e.classList.contains('bad')) return;
+        beep('click');
+        app.querySelectorAll('.op').forEach(x => x.classList.remove('sel'));
+        e.classList.add('sel');
+        selectedIdx = +e.dataset.j;
+        verifyBtn.disabled = false;
+      };
+    });
+
+    verifyBtn.onclick = () => {
+      if(fin || selectedIdx === null) return;
+      const chosenEl = app.querySelector(`.op[data-j="${selectedIdx}"]`);
+      chosenEl.classList.remove('sel');
+
+      if(selectedIdx === q.k){
+        fin = 1;
+        chosenEl.classList.add('ok');
+        const earned = tries === 0 ? 100 : 50;
+        pts(1, earned);
+        res = 'ok';
+        saveView();
+        beep('ok');
+        flashPanel('ok');
+        fb(`<div class="fb-card ok">🎉 <b>Jawaban Tepat! (+${earned} Poin)</b><br>${q.e}</div>`);
+      } else {
+        chosenEl.classList.add('bad');
+        chosenEl.style.pointerEvents = 'none';
+        pts(0);
+        beep('bad');
+        flashPanel('bad');
+        tries++;
+        bad.push(+chosenEl.dataset.j);
+        saveView();
+        selectedIdx = null;
+        verifyBtn.disabled = true;
+
+        const rem = Math.max(0, 2 - tries);
+        qAttBadge.innerHTML = `🎯 Kesempatan: ${rem} tersisa`;
+
+        if(tries >= 2){
+          fin = 1;
+          res = 'fail';
+          saveView();
+          app.querySelector(`.op[data-j="${q.k}"]`).classList.add('ok');
+          fb(`<div class="fb-card bad">✖ <b>Kesempatan habis!</b> Jawaban yang tepat adalah <b>${'ABCD'[q.k]}</b>.<br>${q.e}</div>`);
+        } else {
+          fb(`<div class="fb-card bad">⚠ <b>Pilihan belum tepat!</b> Silakan pilih opsi lain, lalu klik <b>“Pilih Jawaban”</b> lagi (sisa 1 kesempatan).</div>`);
+        }
+      }
+
+      if(fin){
+        app.querySelectorAll('.op').forEach(x => x.style.pointerEvents = 'none');
+        showNextQuizBtn();
+      }
+    };
+
+    saveView();
+    // pulihkan keadaan soal ini bila halaman dimuat ulang
+    if(rsq){
+      bad.forEach(j => {
+        const el = app.querySelector(`.op[data-j="${j}"]`);
+        if(el){ el.classList.add('bad'); el.style.pointerEvents = 'none'; }
+      });
+      qAttBadge.innerHTML = `🎯 Kesempatan: ${Math.max(0, 2 - tries)} tersisa`;
+      if(fin){
+        app.querySelectorAll('.op').forEach(x => x.style.pointerEvents = 'none');
+        app.querySelector(`.op[data-j="${q.k}"]`).classList.add('ok');
+        if(res === 'ok'){
+          const earned = tries === 0 ? 100 : 50;
+          fb(`<div class="fb-card ok">🎉 <b>Jawaban Tepat! (+${earned} Poin)</b><br>${q.e}</div>`);
+        } else {
+          fb(`<div class="fb-card bad">✖ <b>Kesempatan habis!</b> Jawaban yang tepat adalah <b>${'ABCD'[q.k]}</b>.<br>${q.e}</div>`);
+        }
+        showNextQuizBtn();
+      } else if(tries >= 1){
+        fb(`<div class="fb-card bad">⚠ <b>Pilihan belum tepat!</b> Silakan pilih opsi lain, lalu klik <b>“Pilih Jawaban”</b> lagi (sisa 1 kesempatan).</div>`);
+      }
+    }
+  }
+  show();
+}
+
+function result(){
+  clearInterval(tm);
+  if(S.final == null) S.final = Date.now() - S.t0;
+  setView({type:'result'});
+  { const fs = Math.floor(S.final/1000);
+    $('#tm').textContent = String(Math.floor(fs/60)).padStart(2,'0')+':'+String(fs%60).padStart(2,'0'); }
+  const finalPayload = buildSyncPayload(true);
+  const st = finalPayload.akurasi >= 90 ? 3 : finalPayload.akurasi >= 70 ? 2 : finalPayload.akurasi >= 50 ? 1 : 0;
+  beep('ok');
+
+  app.innerHTML=`<section class="panel" style="text-align:center"><div class="stars">${'⭐'.repeat(st)||'🌱'}</div><h1>Misi Selesai!</h1>
+ <p class="mut">${S.name}, pangkatmu: <b style="color:var(--cad-cyan)">${finalPayload.pangkat}</b></p>
+ <p style="font-size:12px; color:var(--cad-green);">✨ Hasil akhir telah tersinkronisasi ke Dashboard Guru & Leaderboard.</p>
+ 
+ <div class="big"><div><b>${S.score}</b>Skor Kamu</div><div id="myRankBox"><b>Memuat...</b>Peringkat Pribadi</div><div><b>${finalPayload.akurasi}%</b>Akurasi</div></div>
+
+ <h3>🏆 Top 3 Drafter Terbaik (Global)</h3>
+ <div id="podiumContainer" class="podium-box">
+    <div class="podium-card"><b>#1</b><span>Memuat...</span></div>
+    <div class="podium-card"><b>#2</b><span>Memuat...</span></div>
+    <div class="podium-card"><b>#3</b><span>Memuat...</span></div>
+ </div>
+
+ <div class="row" style="justify-content:center; margin-top:20px;"><button class="btn" id="ag">↻ Main Lagi (Lobi)</button><button class="btn ghost" id="kd">📖 Kamus Perintah</button></div></section>`;
+
+ $('#ag').onclick=()=>morphNavigate(home);
+ $('#kd').onclick=()=>morphNavigate(()=>{
+   $('#app').innerHTML=`<section class="panel"><h2>📖 Kamus Perintah</h2>${cards()}<div class="row"><button class="btn" id="bk">← Kembali</button></div></section>`;
+   $('#bk').onclick=()=>morphNavigate(result);
+ });
+
+  window.syncStudentSession(S.sessionId, finalPayload, () => {
+    window.listenToStudentResults((data) => {
+      const podium = document.getElementById('podiumContainer');
+      const rankBox = document.getElementById('myRankBox');
+      if(!podium || !rankBox) return;
+
+      let myRankIndex = data.findIndex(item => item.sessionId === S.sessionId);
+      let myRankText = myRankIndex !== -1 ? `#${myRankIndex + 1} dari ${data.length}` : `#1`;
+      rankBox.innerHTML = `<b>${myRankText}</b>Peringkat Pribadi`;
+
+      let podiumHTML = '';
+      for(let i=0; i<3; i++) {
+        if(data[i]) {
+          podiumHTML += `<div class="podium-card"><b>#${i+1} ${data[i].nama}</b><span>${data[i].skor} Poin</span></div>`;
+        } else {
+          podiumHTML += `<div class="podium-card"><b>#${i+1}</b><span>Kosong</span></div>`;
+        }
+      }
+      podium.innerHTML = podiumHTML;
+    });
+  });
+}
+
+function renderDeveloperDashboard() {
+  app.innerHTML = `
+    <section class="panel">
+      <h2>👨‍💻 Dashboard Guru / Pengawas (Live Monitor)</h2>
+      <p class="mut">Siswa yang baru masuk lobi maupun yang sedang mengerjakan soal langsung muncul di bawah ini secara real-time.</p>
+      
+      <div class="big">
+        <div><b id="dashTotal">0</b>Total Siswa Masuk</div>
+        <div><b id="dashActive">0</b>Sedang Bermain</div>
+        <div><b id="dashAvgScore">0</b>Rata-rata Skor</div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Nama Siswa</th>
+              <th>Status</th>
+              <th>Misi / Pangkat</th>
+              <th>Skor</th>
+              <th>Akurasi</th>
+            </tr>
+          </thead>
+          <tbody id="dashTableBody">
+            <tr><td colspan="6" style="text-align:center;">Menunggu siswa masuk...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row" style="margin-top:16px; justify-content:space-between;">
+        <button class="btn ghost" id="dashBack">← Kembali ke Lobi</button>
+        <button class="btn ghost" id="dashClear" style="border-color:var(--acc); color:var(--acc);">🗑 Reset Data Kelas</button>
+      </div>
+    </section>
+  `;
+
+  $('#dashBack').onclick = () => morphNavigate(home);
+  $('#dashClear').onclick = async () => {
+    if (confirm('Hapus seluruh data siswa dari Leaderboard & Dashboard?')) {
+      await window.clearAllResults();
+    }
+  };
+
+  window.listenToStudentResults((data) => {
+    const tbody = $('#dashTableBody');
+    if (!tbody) return;
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada siswa yang masuk.</td></tr>`;
+      $('#dashTotal').textContent = '0';
+      $('#dashActive').textContent = '0';
+      $('#dashAvgScore').textContent = '0';
+      return;
+    }
+
+    let totalScore = 0;
+    let activeCount = 0;
+    tbody.innerHTML = data.map((item, index) => {
+      totalScore += item.skor || 0;
+      const isDone = item.status === 'Selesai';
+      if (!isDone) activeCount++;
+      const badge = isDone
+        ? `<span class="status-pill status-done">✔ Selesai</span>`
+        : `<span class="status-pill status-active">⏳ Sedang Bermain</span>`;
+
+      return `
+        <tr>
+          <td><b>#${index + 1}</b></td>
+          <td><b>${item.nama}</b></td>
+          <td>${badge}</td>
+          <td>${isDone ? item.pangkat : (item.misiAktif || 'Command Explorer')}</td>
+          <td><b style="color:var(--cad-cyan)">${item.skor}</b></td>
+          <td>${item.akurasi}%</td>
+        </tr>
+      `;
+    }).join('');
+
+    $('#dashTotal').textContent = data.length;
+    $('#dashActive').textContent = activeCount;
+    $('#dashAvgScore').textContent = Math.round(totalScore / data.length);
+  });
+}
+
+// Lanjutkan permainan dari posisi terakhir (setelah refresh / tutup tab / keluar web)
+function resumeGame(d){
+  S = d;
+  S.t0 = Date.now() - (S.elapsed || 0);
+  $('#mainHeader').classList.remove('hidden-header');
+  hud();
+  const v = S.view;
+
+  if(v.type === 'result'){ result(); return; }
+
+  clock();
+  window.syncStudentSession(S.sessionId, buildSyncPayload(false));
+
+  if(v.type === 'match')       { v.round === 2 ? P2(v) : P1(v); }
+  else if(v.type === 'typed')  { typed(G(3), toM2Intro, v); }
+  else if(v.type === 'intro')  { v.n === 2 ? intro(2, toM2Quiz) : intro(3, toM3Quiz); }
+  else if(v.type === 'quiz')   { v.n === 2 ? quiz(2, M2, SUB2, toM3Intro, v) : quiz(3, M3, SUB3, result, v); }
+  else throw new Error('view tidak dikenal: ' + v.type);
+}
+
+function boot(){
+  const saved = loadProgress();
+  if(saved){
+    try{ resumeGame(saved); return; }
+    catch(err){
+      console.warn('Progres tersimpan tidak bisa dipulihkan, mulai dari awal:', err);
+      clearInterval(tm); S = null; clearProgress();
+    }
+  }
+  let entered = false;
+  try{ entered = localStorage.getItem(ENTER_KEY) === '1'; }catch(e){}
+  if(entered){
+    $('#mainHeader').classList.remove('hidden-header');
+    home();
+  } else {
+    showWelcomeScreen();
+  }
+}
+
+// Mulai dari Halaman Welcome / Lobi / posisi terakhir
+boot();
+</script>
+</body>
+</html>

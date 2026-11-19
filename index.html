@@ -344,6 +344,12 @@ h3{margin:16px 0 8px;font-size:15px;color:var(--cad-cyan)}
 .admin-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .admin-table th, .admin-table td{border:1px solid var(--card-border);padding:10px 8px;text-align:left}
 .admin-table th{background:#111722;color:var(--cad-cyan)}
+.an-row{margin:10px 0;font-size:13px;text-align:left}
+.an-row .hd{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.an-row small{color:var(--mut)}
+.ab{height:8px;background:#111722;border:1px solid var(--card-border);border-radius:4px;overflow:hidden;margin-top:4px}
+.ab i{display:block;height:100%;background:var(--cad-green)}
+.ab.warn i{background:var(--acc)}
 
 .podium-box{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin:12px 0;text-align:center}
 .podium-card{background:#111722;border:1px solid var(--card-border);border-top:3px solid var(--cad-cyan);border-radius:6px;padding:12px;font-size:13px}
@@ -809,14 +815,21 @@ function buildSyncPayload(isFinished = false) {
     pangkat: rk,
     status: isFinished ? 'Selesai' : 'Sedang Bermain',
     misiAktif: isFinished ? 'Semua Misi Selesai' : (LB[(S.cur || 1) - 1] || 'Command Explorer'),
-    durasiDetik: t
+    durasiDetik: t,
+    misi: {
+      m1: { benar: (S.st[0]||[0,0])[0], salah: (S.st[0]||[0,0])[1] },
+      m2: { benar: (S.st[1]||[0,0])[0], salah: (S.st[1]||[0,0])[1] },
+      m3: { benar: (S.st[2]||[0,0])[0], salah: (S.st[2]||[0,0])[1] }
+    },
+    topik: S.tp || {}
   };
 }
 
-function pts(ok,v){
+function pts(ok,v,topic){
   if(ok){S.right++;S.streak++;S.score+=v*(S.streak>=3?2:1)}
   else{S.wrong++;S.streak=0;S.score=Math.max(0,S.score-20)}
   S.st[S.cur-1][ok?0:1]++;
+  if(topic){ S.tp=S.tp||{}; const tt=S.tp[topic]=S.tp[topic]||{b:0,s:0}; ok?tt.b++:tt.s++; }
   hud();
   if (S && S.sessionId) {
     window.syncStudentSession(S.sessionId, buildSyncPayload(false));
@@ -866,8 +879,12 @@ function showWelcomeScreen() {
       <div class="splash-content">
         <div style="font-size:48px; margin-bottom:12px;">📐</div>
         <div class="splash-title">SELAMAT DATANG DI <span>CADMISSION</span></div>
-        <div class="splash-subtitle">Media Pembelajaran Game Based Learning yang dikembangkan untuk mata pelajaran Aplikasi Perangkat Lunak dan Perancangan Interior Gedung (APLPIG) kelas X DPIB, dengan cakupan materi Perintah Dasar AutoCAD.
-Media ini bertujuan untuk membantu peserta didik dalam memahami, menerapkan, dan mengoperasikan berbagai perintah pada aplikasi penggambaran 2D AutoCAD. Setelah menggunakan media ini peserta didik mampu menerapkan dan mengoperasikan berbagai perintah dasar pada aplikasi AutoCAD untuk menghasilkan gambar 2D.</div>
+        <div class="splash-subtitle">
+  Media Pembelajaran Game Based Learning yang dikembangkan untuk mata pelajaran Aplikasi Perangkat Lunak dan Perancangan Interior Gedung (APLPIG) kelas X DPIB, dengan cakupan materi Perintah Dasar AutoCAD.<br><br>
+  Media ini bertujuan untuk membantu peserta didik dalam menerapkan dan mengoperasikan berbagai perintah pada aplikasi penggambaran 2D AutoCAD.<br><br>
+  Setelah menggunakan media ini peserta didik diharapkan mampu menerapkan dan mengoperasikan berbagai perintah dasar pada aplikasi AutoCAD untuk menghasilkan gambar 2D yang baik dan benar.
+</div>
+
         <button class="pulse-btn" id="startPortalBtn">KETUK UNTUK MELANJUTKAN ➔</button>
       </div>
     </section>
@@ -903,6 +920,7 @@ function begin(m){
     hintsLeft: 2,
     st: [[0,0],[0,0],[0,0]],
     final: null,
+    tp: {},
     view: null
   };
 
@@ -1014,7 +1032,7 @@ function matchRound(o,rs){
   function tryM(a,b){
     if(a==b){
       ['l','r'].forEach(s=>{const e=q(a,s);e.classList.remove('sel');e.classList.add('ok')});
-      sel=null;pts(1,100);beep('ok');flashPanel('ok');
+      sel=null;pts(1,100,a);beep('ok');flashPanel('ok');
       S.view.matched.push(a);saveProgress();
       $('#pb').style.width=(++d/n*100)+'%';
       if(d==n)setTimeout(()=>{ if(S) o.next(); },700);
@@ -1022,7 +1040,7 @@ function matchRound(o,rs){
       const e=q(b,'r');
       e.classList.add('bad');
       setTimeout(()=>e.classList.remove('bad'),500);
-      pts(0);beep('bad');flashPanel('bad');
+      pts(0,0,a);beep('bad');flashPanel('bad');
     }
   }
   // pulihkan pasangan yang sudah benar bila halaman dimuat ulang
@@ -1174,7 +1192,7 @@ function typed(items,next,rs){
 
       if(v == c.n || v == c.a || (c.x||[]).includes(v)){
         fin = 1;
-        pts(1, fails === 0 ? 150 : 75);
+        pts(1, fails === 0 ? 150 : 75, c.n);
         res = 'ok';
         saveView();
         beep('ok');
@@ -1186,7 +1204,7 @@ function typed(items,next,rs){
         anim(cv, c.n);
         showNextButton();
       } else {
-        pts(0);
+        pts(0, 0, c.n);
         fails++;
         saveView();
         beep('bad');
@@ -1306,7 +1324,7 @@ function quiz(n,Q,sub,next,rs){
         fin = 1;
         chosenEl.classList.add('ok');
         const earned = tries === 0 ? 100 : 50;
-        pts(1, earned);
+        pts(1, earned, 'M'+n+'-'+(i+1));
         res = 'ok';
         saveView();
         beep('ok');
@@ -1315,7 +1333,7 @@ function quiz(n,Q,sub,next,rs){
       } else {
         chosenEl.classList.add('bad');
         chosenEl.style.pointerEvents = 'none';
-        pts(0);
+        pts(0, 0, 'M'+n+'-'+(i+1));
         beep('bad');
         flashPanel('bad');
         tries++;
@@ -1369,7 +1387,96 @@ function quiz(n,Q,sub,next,rs){
   }
   show();
 }
+// =========================================================================
+// ANALISIS PER MISI & PER MATERI
+// =========================================================================
+const QTOPIK = {
+  2: ['CIRCLE','COPY','TRIM','OFFSET','MOVE'],
+  3: ['OFFSET – garis sejajar salah sisi','LINE – celah antar garis','COPY – jarak salinan tidak konsisten','TRIM – merapikan sudut','COPY – strategi objek yang sama']
+};
+function topikLabel(key){
+  const m = /^M([23])-(\d+)$/.exec(key);
+  if(m){
+    const nm = (QTOPIK[m[1]] || [])[+m[2]-1] || ('Soal ' + m[2]);
+    return m[1] === '2' ? `Urutan langkah ${nm}` : `Kasus: ${nm}`;
+  }
+  const c = C.find(x => x.n === key);
+  return c ? `${c.n} (${CAT_LB[c.g-1]})` : key;
+}
+function topikHint(key){
+  const c = C.find(x => x.n === key);
+  return c ? c.f : '';
+}
+const pctOf = (b,s) => (b+s) > 0 ? Math.round(b/(b+s)*100) : 0;
 
+function personalBreakdownHTML(){
+  const rows = LB.map((nm,i) => {
+    const st = (S.st && S.st[i]) || [0,0];
+    const t = st[0] + st[1];
+    return `<tr><td>${nm}</td><td>${st[0]}</td><td>${st[1]}</td><td>${t ? pctOf(st[0],st[1]) + '%' : '-'}</td></tr>`;
+  }).join('');
+  const weak = Object.entries(S.tp || {})
+    .filter(([k,v]) => v.s > 0)
+    .sort((a,b) => (b[1].s - a[1].s) || (pctOf(a[1].b,a[1].s) - pctOf(b[1].b,b[1].s)))
+    .slice(0,3);
+  const weakHTML = weak.length
+    ? '<ul style="margin:6px 0 0;padding-left:20px">' + weak.map(([k,v]) =>
+        `<li><b>${topikLabel(k)}</b> – salah ${v.s}×${topikHint(k) ? `<br><small class="mut">${topikHint(k)}</small>` : ''}</li>`).join('') + '</ul>'
+    : '<p class="mut">Hebat! Tidak ada materi yang salah.</p>';
+  return `<div style="text-align:left">
+    <h3>📊 Rincian per Misi</h3>
+    <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Misi</th><th>Benar</th><th>Salah</th><th>Akurasi</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <h3>🔁 Materi yang Perlu Diulang</h3>${weakHTML}
+  </div>`;
+}
+
+function perMisiCell(item){
+  if(!item.misi) return '-';
+  return ['m1','m2','m3'].map((k,i) => {
+    const m = item.misi[k] || {};
+    const b = m.benar || 0, sl = m.salah || 0;
+    return `M${i+1} ${(b+sl) ? pctOf(b,sl) + '%' : '–'}`;
+  }).join(' · ');
+}
+
+function classAnalysisHTML(data){
+  const misi = [{b:0,s:0},{b:0,s:0},{b:0,s:0}];
+  const topik = {};
+  let n = 0;
+  data.forEach(it => {
+    if(!it.misi) return;
+    n++;
+    ['m1','m2','m3'].forEach((k,i) => {
+      misi[i].b += (it.misi[k] && it.misi[k].benar) || 0;
+      misi[i].s += (it.misi[k] && it.misi[k].salah) || 0;
+    });
+    Object.keys(it.topik || {}).forEach(k => {
+      const t = it.topik[k] || {};
+      topik[k] = topik[k] || {b:0,s:0};
+      topik[k].b += t.b || 0;
+      topik[k].s += t.s || 0;
+    });
+  });
+  if(!n) return '<p class="mut">Belum ada data analisis. Data muncul setelah siswa menjawab soal.</p>';
+
+  const misiHTML = misi.map((m,i) => {
+    const p = pctOf(m.b, m.s);
+    return `<div class="an-row"><div class="hd"><b>${LB[i]}</b><span>Akurasi ${(m.b+m.s) ? p + '%' : '–'} <small>(benar ${m.b} · salah ${m.s})</small></span></div><div class="ab ${p < 60 ? 'warn' : ''}"><i style="width:${p}%"></i></div></div>`;
+  }).join('');
+
+  const list = Object.entries(topik)
+    .filter(([k,v]) => v.s > 0)
+    .map(([k,v]) => ({k, b:v.b, s:v.s, rate: Math.round(v.s/(v.b+v.s)*100)}))
+    .sort((a,b) => (b.rate - a.rate) || (b.s - a.s))
+    .slice(0,8);
+  const topikHTML = list.length
+    ? list.map(x => `<div class="an-row"><div class="hd"><b>${topikLabel(x.k)}</b><span>${x.rate}% salah <small>(${x.s} dari ${x.b+x.s} percobaan)</small></span></div><div class="ab ${x.rate >= 50 ? 'warn' : ''}"><i style="width:${x.rate}%"></i></div></div>`).join('')
+    : '<p class="mut">Belum ada jawaban salah yang tercatat.</p>';
+
+  return `<h3>📊 Analisis per Misi <small class="mut">(${n} siswa)</small></h3>${misiHTML}
+    <h3>⚠ Materi Paling Sering Salah</h3>
+    <p class="mut">Persentase = jawaban salah ÷ seluruh percobaan pada materi itu. Semakin tinggi, semakin perlu dibahas ulang.</p>${topikHTML}`;
+}
 function result(){
   clearInterval(tm);
   if(S.final == null) S.final = Date.now() - S.t0;
@@ -1385,7 +1492,7 @@ function result(){
  <p style="font-size:12px; color:var(--cad-green);">✨ Hasil akhir telah tersinkronisasi ke Dashboard Guru & Leaderboard.</p>
  
  <div class="big"><div><b>${S.score}</b>Skor Kamu</div><div id="myRankBox"><b>Memuat...</b>Peringkat Pribadi</div><div><b>${finalPayload.akurasi}%</b>Akurasi</div></div>
-
+ ${personalBreakdownHTML()}
  <h3>🏆 Top 3 Drafter Terbaik (Global)</h3>
  <div id="podiumContainer" class="podium-box">
     <div class="podium-card"><b>#1</b><span>Memuat...</span></div>
@@ -1435,7 +1542,9 @@ function renderDeveloperDashboard() {
         <div><b id="dashActive">0</b>Sedang Bermain</div>
         <div><b id="dashAvgScore">0</b>Rata-rata Skor</div>
       </div>
+      <div id="dashAnalisis"></div>
 
+      <h3>👥 Data per Siswa</h3>
       <div style="overflow-x:auto;">
         <table class="admin-table">
           <thead>
@@ -1446,10 +1555,11 @@ function renderDeveloperDashboard() {
               <th>Misi / Pangkat</th>
               <th>Skor</th>
               <th>Akurasi</th>
+              <th>Per Misi</th>
             </tr>
           </thead>
           <tbody id="dashTableBody">
-            <tr><td colspan="6" style="text-align:center;">Menunggu siswa masuk...</td></tr>
+            <tr><td colspan="7" style="text-align:center;">Menunggu siswa masuk...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1476,6 +1586,7 @@ function renderDeveloperDashboard() {
       $('#dashTotal').textContent = '0';
       $('#dashActive').textContent = '0';
       $('#dashAvgScore').textContent = '0';
+      $('#dashAnalisis').innerHTML = '';
       return;
     }
 
@@ -1497,6 +1608,7 @@ function renderDeveloperDashboard() {
           <td>${isDone ? item.pangkat : (item.misiAktif || 'Command Explorer')}</td>
           <td><b style="color:var(--cad-cyan)">${item.skor}</b></td>
           <td>${item.akurasi}%</td>
+          <td>${perMisiCell(item)}</td>
         </tr>
       `;
     }).join('');
@@ -1504,6 +1616,7 @@ function renderDeveloperDashboard() {
     $('#dashTotal').textContent = data.length;
     $('#dashActive').textContent = activeCount;
     $('#dashAvgScore').textContent = Math.round(totalScore / data.length);
+    $('#dashAnalisis').innerHTML = classAnalysisHTML(data);
   });
 }
 

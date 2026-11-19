@@ -380,7 +380,9 @@ h3{margin:16px 0 8px;font-size:15px;color:var(--cad-cyan)}
   </div>
   <div class="hud">
     <span class="sync-badge" id="syncStatus">🟡 Lokal / Offline</span>
-    <span>⭐ <b id="sc">0</b></span>
+    <span id="pnBox" style="display:none;max-width:170px;overflow:hidden;text-overflow:ellipsis">👤 <b id="pn"></b></span>
+<span id="pnBox" style="display:none;max-width:170px;overflow:hidden;text-overflow:ellipsis">👤 <b id="pn"></b></span>
+<span>⭐ <b id="sc">0</b></span>
     <span>🔥 <b id="st">0</b></span>
     <span>⏱ <b id="tm" class="mono">00:00</b></span>
     <button id="sn" title="Suara">🔊</button>
@@ -776,7 +778,13 @@ function flashPanel(type){
 }
 
 $('#sn').onclick=()=>{snd=!snd;$('#sn').textContent=snd?'🔊':'🔇'};
-function hud(){$('#sc').textContent=S?S.score:0;$('#st').textContent=S?S.streak+(S.streak>=3?' ×2':''):0;updateExit()}
+function hud(){
+  $('#sc').textContent=S?S.score:0;
+  $('#st').textContent=S?S.streak+(S.streak>=3?' ×2':''):0;
+  const pnBox=$('#pnBox');
+  if(pnBox){pnBox.style.display=S?'':'none';$('#pn').textContent=S?S.name:''}
+  updateExit();
+}
 $('#exitBtn').onclick=()=>{
   if(!S) return;
   if(confirm('Keluar dari misi? Progres yang tersimpan akan dihapus dan kamu kembali ke lobi.')){
@@ -858,7 +866,8 @@ function showWelcomeScreen() {
       <div class="splash-content">
         <div style="font-size:48px; margin-bottom:12px;">📐</div>
         <div class="splash-title">SELAMAT DATANG DI <span>CADMISSION</span></div>
-        <div class="splash-subtitle">Platform edukasi interaktif berbasis web untuk menguasai perintah dasar, modifikasi, dan pemecahan masalah teknis AutoCAD 2D.</div>
+        <div class="splash-subtitle">Media Pembelajaran Game Based Learning yang dikembangkan untuk mata pelajaran Aplikasi Perangkat Lunak dan Perancangan Interior Gedung (APLPIG) kelas X DPIB, dengan cakupan materi Perintah Dasar AutoCAD.
+Media ini bertujuan untuk membantu peserta didik dalam memahami, menerapkan, dan mengoperasikan berbagai perintah pada aplikasi penggambaran 2D AutoCAD. Setelah menggunakan media ini peserta didik mampu menerapkan dan mengoperasikan berbagai perintah dasar pada aplikasi AutoCAD untuk menghasilkan gambar 2D.</div>
         <button class="pulse-btn" id="startPortalBtn">KETUK UNTUK MELANJUTKAN ➔</button>
       </div>
     </section>

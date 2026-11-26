@@ -149,6 +149,45 @@ main{
   margin: 0 auto 28px;
   line-height: 1.6;
 }
+
+/* Halaman sambutan: tata letak lebih terstruktur dan visual */
+.splash-content{padding:clamp(16px,3vw,30px) 4px;text-align:center}
+.splash-mark{font-size:clamp(38px,5vw,54px);margin:0 0 10px;display:inline-grid;place-items:center;width:76px;height:76px;border-radius:22px;background:linear-gradient(145deg,rgba(0,240,255,.12),rgba(0,136,255,.08));border:1px solid rgba(0,240,255,.24);box-shadow:0 10px 28px rgba(0,136,255,.1)}
+.splash-title{font-size:clamp(23px,3.6vw,34px);line-height:1.2;margin:0 0 10px;letter-spacing:.6px;text-wrap:balance}
+.splash-intro{max-width:650px;margin:0 auto 20px;color:var(--mut);font-size:14px;line-height:1.65}
+.splash-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 22px;max-width:720px}
+.splash-badge{border:1px solid rgba(0,240,255,.25);background:rgba(0,240,255,.06);color:var(--cad-cyan);border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;letter-spacing:.25px}
+.welcome-info{max-width:900px;margin:0 auto 22px;text-align:left;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.welcome-block{background:linear-gradient(145deg,#141f2e,#101823);border:1px solid rgba(133,158,190,.18);border-radius:13px;padding:16px 17px;min-width:0;box-shadow:0 7px 18px rgba(0,0,0,.12)}
+.welcome-block h3{font-size:12px;color:var(--cad-cyan);margin:0 0 11px;letter-spacing:.65px;display:flex;align-items:center;gap:7px}
+.welcome-block p{margin:7px 0;font-size:12.5px;line-height:1.58;color:var(--ink)}
+.welcome-block strong{color:#fff}
+.welcome-block ul{margin:4px 0 0;padding-left:18px;font-size:12.5px;line-height:1.65}
+.welcome-block li{margin:2px 0}
+.welcome-kd p{padding:9px 11px;margin:7px 0;background:rgba(5,12,20,.38);border:1px solid rgba(133,158,190,.12);border-radius:8px}
+.welcome-objective{border-color:rgba(255,209,102,.28);background:linear-gradient(135deg,rgba(255,209,102,.07),#17212c 58%)}
+.welcome-objective h3{color:var(--cad-yellow)}
+.welcome-objective p{font-size:13px;line-height:1.7}
+.splash-cta{margin-top:4px;min-width:190px}
+
+/* Kamus CAD: layout kartu ringkas, satu kolom, tanpa panel kecil bertumpuk */
+.cg{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.command-card{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;background:#121b28;border:1px solid var(--card-border);border-radius:10px;padding:12px;margin:10px 0;align-items:start}
+.command-symbol{width:52px;height:52px;border:1px solid rgba(0,240,255,.28);background:rgba(0,240,255,.06);color:var(--cad-cyan);border-radius:8px;display:grid;place-items:center}
+.command-symbol svg{width:34px;height:34px}
+.command-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 4px}
+.command-head h4{margin:0;font-size:16px}
+.command-alias{font-family:ui-monospace,monospace;color:var(--cad-yellow);background:#202a39;border-radius:5px;padding:2px 6px;font-size:11px}
+.command-card p{margin:5px 0;font-size:12.5px;line-height:1.5;color:var(--ink)}
+.command-concept,.command-example{grid-column:1/-1;border-top:1px solid #263449;padding-top:8px;margin-top:2px}
+.command-concept b,.command-example b{color:var(--cad-cyan);font-size:12px}
+.command-visual{grid-column:1/-1;display:flex;align-items:center;gap:10px;background:#0d131c;border:1px solid #263449;border-radius:8px;padding:8px 10px;margin-top:4px;min-width:0}
+.command-visual svg.diagram{width:108px;height:58px;flex:none;display:block}
+.command-visual .visual-copy{min-width:0}
+.command-visual b{font-size:12px;color:#fff;display:block}
+.command-visual small{font-size:11px;color:var(--mut);display:block;line-height:1.4}
+@media(max-width:650px){.welcome-info{grid-template-columns:1fr}.splash-content{padding:12px 0}.welcome-block{padding:13px}.command-card{grid-template-columns:44px minmax(0,1fr);padding:10px}.command-symbol{width:42px;height:42px}.command-symbol svg{width:30px;height:30px}.command-visual svg.diagram{width:88px;height:50px}}
+
 .pulse-btn {
   background: linear-gradient(135deg, var(--cad-cyan), #0088ff);
   color: #05070a;
@@ -288,6 +327,13 @@ canvas{width:100%;max-width:440px;aspect-ratio:360/220;border-radius:8px;border:
 .cmd input{flex:1;background:transparent;border:0;color:#fff;outline:0;text-transform:uppercase;font-size:16px;padding:6px 4px}
 .cmd input.bad{animation:sk .4s;color:#ff8a94}
 .cmd input.okk{color:var(--cad-green)}
+.stageChoice{width:100%;min-height:44px;white-space:normal;line-height:1.35;border:1px solid var(--card-border);border-radius:8px;padding:10px 12px}
+.stageChoice:hover{border-color:var(--cad-cyan);background:rgba(0,240,255,.07)}
+.stageChoice:active{transform:scale(.99)}
+#stepArea .fb-card{margin-top:10px}
+#stepArea .cmd{border-color:rgba(0,240,255,.35)}
+#stepArea .cmd input{text-transform:none;min-width:60px}
+.stage-unit{font-weight:700;color:var(--cad-yellow);padding:0 4px}
 
 .fb{margin:12px 0 0;font-size:14px;min-height:24px}
 .fb-card{
@@ -583,6 +629,25 @@ const C=[
 {g:3,n:'STRETCH',a:'S',f:'Menarik sebagian objek dengan memilih titik ujungnya memakai jendela silang (crossing).',i:'<rect x="4" y="10" width="12" height="12"/><path d="M16 16h12M24 12l4 4-4 4"/>'}
 ];
 
+
+const MATERIAL={
+LINE:{concept:'Membuat segmen garis lurus dengan menentukan titik awal dan titik berikutnya. Setiap segmen dapat berdiri sebagai objek garis tersendiri.',syntax:'LINE → titik awal → titik berikutnya → Enter',steps:['Jalankan LINE (L).','Tentukan titik awal.','Tentukan titik berikutnya; lanjutkan jika diperlukan.','Tekan Enter untuk mengakhiri.'],example:'Membuat garis sisi dinding, garis batas ruang, atau garis bantu pada denah.',mistake:'Titik yang tidak tepat dapat membuat garis tidak tersambung. Gunakan Object Snap (misalnya Endpoint) ketika perlu menghubungkan titik.'},
+POLYLINE:{concept:'Membuat rangkaian segmen garis dan/atau busur yang tersambung sebagai satu objek Polyline, sehingga lebih mudah dikelola sebagai satu kesatuan.',syntax:'PLINE (PL) → titik awal → titik berikutnya → Enter',steps:['Jalankan PLINE.','Tentukan titik awal.','Tentukan titik-titik berikutnya untuk membentuk rangkaian.','Tekan Enter untuk selesai.'],example:'Menggambar garis batas area atau bentuk tertutup yang ingin diperlakukan sebagai satu objek.',mistake:'LINE menghasilkan segmen terpisah, sedangkan PLINE menggabungkan rangkaian segmen menjadi satu objek.'},
+CIRCLE:{concept:'Membuat lingkaran dengan menentukan titik pusat dan radius, atau menggunakan opsi diameter.',syntax:'CIRCLE (C) → center → radius / Diameter',steps:['Jalankan CIRCLE.','Tentukan titik pusat.','Masukkan radius atau pilih opsi Diameter lalu masukkan nilainya.','Tekan Enter.'],example:'Menggambar simbol kolom bundar, lingkaran penanda, atau objek berbentuk lingkaran pada denah.',mistake:'Pastikan nilai radius dan diameter tidak tertukar; diameter bernilai dua kali radius.'},
+ARC:{concept:'Membuat busur, yaitu bagian dari keliling lingkaran. Bentuk busur ditentukan melalui kombinasi titik atau parameter yang tersedia.',syntax:'ARC (A) → tentukan titik/parameter busur sesuai opsi',steps:['Jalankan ARC.','Ikuti prompt untuk menentukan titik awal dan parameter berikutnya.','Tentukan titik akhir atau parameter busur sesuai metode.','Selesaikan perintah.'],example:'Menggambarkan arah bukaan pintu pada denah menggunakan busur sebagai simbol ayunan.',mistake:'Perhatikan urutan titik dan arah busur agar busur terbentuk pada sisi yang diinginkan.'},
+RECTANGLE:{concept:'Membuat persegi panjang dengan menentukan dua titik sudut yang berhadapan. Tersedia opsi tambahan seperti ukuran, chamfer, fillet, dan elevation.',syntax:'RECTANG (REC) → titik sudut pertama → titik sudut berhadapan',steps:['Jalankan RECTANG.','Tentukan sudut pertama.','Tentukan sudut yang berhadapan atau masukkan ukuran melalui opsi Dimensions.','Selesaikan perintah.'],example:'Membuat bentuk awal ruang, meja, lemari, atau bidang denah yang berbentuk persegi panjang.',mistake:'Pastikan kedua titik sudut membentuk arah dan ukuran yang sesuai; gunakan input dimensi bila ukuran presisi diperlukan.'},
+MOVE:{concept:'Memindahkan objek dari posisi semula ke posisi baru tanpa mengubah bentuk atau ukurannya. Pemindahan ditentukan oleh base point dan titik tujuan.',syntax:'MOVE (M) → select objects → Enter → base point → destination',steps:['Jalankan MOVE.','Pilih objek lalu Enter.','Tentukan base point.','Tentukan titik tujuan.'],example:'Memindahkan simbol furnitur ke posisi yang tepat pada denah ruang.',mistake:'Base point dan titik tujuan yang kurang tepat dapat membuat objek bergeser dari posisi yang direncanakan.'},
+COPY:{concept:'Menggandakan objek ke lokasi lain. Objek asli tetap dipertahankan; posisi salinan ditentukan melalui base point dan titik tujuan.',syntax:'COPY (CO/CP) → select objects → Enter → base point → destination',steps:['Jalankan COPY.','Pilih objek lalu Enter.','Tentukan base point.','Tentukan titik tujuan salinan; ulangi untuk salinan lain, lalu akhiri.'],example:'Menggandakan meja, kursi, jendela, atau simbol yang sama pada denah.',mistake:'Gunakan titik acuan dan lokasi tujuan yang konsisten agar jarak salinan akurat.'},
+ROTATE:{concept:'Memutar objek terhadap titik dasar (base point) dengan sudut tertentu. Sudut positif dan negatif menentukan arah putaran sesuai pengaturan sudut.',syntax:'ROTATE (RO) → select objects → Enter → base point → angle',steps:['Jalankan ROTATE.','Pilih objek lalu Enter.','Tentukan titik dasar putaran.','Masukkan sudut putar.'],example:'Memutar furnitur atau simbol pintu agar sesuai dengan orientasi ruang.',mistake:'Pilih base point yang tepat dan perhatikan nilai sudut serta arah putaran.'},
+MIRROR:{concept:'Membuat salinan objek yang tercermin terhadap garis sumbu yang ditentukan. Pengguna dapat memilih apakah objek asli dipertahankan atau dihapus.',syntax:'MIRROR (MI) → select objects → Enter → first axis point → second axis point',steps:['Jalankan MIRROR.','Pilih objek lalu Enter.','Tentukan dua titik pembentuk sumbu cermin.','Jawab apakah objek asli dipertahankan (Yes/No).'],example:'Membuat bentuk elemen yang simetris, seperti pasangan objek pada sisi kiri dan kanan denah.',mistake:'Penempatan garis sumbu cermin menentukan posisi dan orientasi hasil. Periksa opsi menghapus objek asli.'},
+SCALE:{concept:'Mengubah ukuran objek secara proporsional berdasarkan titik dasar dan faktor skala. Faktor di atas 1 memperbesar, antara 0 dan 1 memperkecil.',syntax:'SCALE (SC) → select objects → Enter → base point → scale factor',steps:['Jalankan SCALE.','Pilih objek lalu Enter.','Tentukan base point.','Masukkan faktor skala.'],example:'Menyesuaikan ukuran objek gambar ketika diperlukan perubahan skala proporsional.',mistake:'SCALE mengubah ukuran objek. Untuk gambar kerja, pastikan skala dan ukuran sebenarnya tetap sesuai ketentuan yang digunakan.'},
+TRIM:{concept:'Memotong atau menghapus bagian objek yang melewati batas potong. Batas pemotongan ditentukan oleh objek lain atau pemilihan batas.',syntax:'TRIM (TR) → cutting edges → select segment to trim',steps:['Jalankan TRIM.','Tentukan batas potong sesuai prompt (pada versi tertentu Enter dapat memilih semua objek sebagai batas).','Klik bagian objek yang ingin dibuang.','Tekan Enter/Esc untuk mengakhiri.'],example:'Membersihkan kelebihan garis dinding pada pertemuan sudut denah.',mistake:'Bagian yang diklik adalah segmen yang akan dibuang. Pastikan batas potong tersedia dan objek yang dipilih tepat.'},
+EXTEND:{concept:'Memperpanjang objek hingga mencapai batas yang ditentukan. Objek yang diperpanjang harus memiliki kemungkinan bertemu dengan batas tersebut.',syntax:'EXTEND (EX) → boundary edges → select object to extend',steps:['Jalankan EXTEND.','Tentukan batas perpanjangan sesuai prompt.','Pilih bagian objek yang ingin diperpanjang.','Akhiri perintah.'],example:'Memperpanjang garis dinding hingga bertemu garis batas ruang atau garis pertemuan.',mistake:'EXTEND memperpanjang objek menuju batas; berbeda dari TRIM yang membuang bagian objek.'},
+OFFSET:{concept:'Membuat objek baru yang sejajar atau mengikuti bentuk objek asal pada jarak tertentu. Jarak dan sisi hasil ditentukan pengguna.',syntax:'OFFSET (O) → distance → select object → click side',steps:['Jalankan OFFSET.','Masukkan jarak offset.','Pilih objek.','Klik sisi tempat objek baru dibuat.'],example:'Membuat garis kedua dinding dengan jarak sesuai ketebalan dinding yang direncanakan pada denah.',mistake:'Klik sisi yang salah menghasilkan offset di arah yang tidak diinginkan. Pastikan jarak sesuai satuan gambar.'},
+FILLET:{concept:'Menghubungkan dua objek dengan lengkungan (arc) yang memiliki radius tertentu. Radius 0 dapat digunakan untuk membentuk sudut tajam dengan menyesuaikan pertemuan objek.',syntax:'FILLET (F) → radius option (if needed) → select first object → select second object',steps:['Jalankan FILLET.','Atur Radius bila diperlukan.','Pilih objek pertama.','Pilih objek kedua untuk membentuk sambungan.'],example:'Membentuk sudut lengkung pada objek atau detail gambar yang membutuhkan transisi melengkung.',mistake:'Radius terlalu besar atau objek tidak sesuai dapat membuat hasil tidak seperti yang diharapkan; periksa pengaturan radius.'},
+STRETCH:{concept:'Mengubah posisi sebagian geometri dengan menarik titik/segmen yang dipilih. Pemilihan crossing window penting agar titik yang ingin ditarik ikut terpilih.',syntax:'STRETCH (S) → crossing selection → base point → displacement',steps:['Jalankan STRETCH.','Pilih bagian objek menggunakan crossing window (seleksi dari kanan ke kiri).','Tekan Enter.','Tentukan base point dan displacement/titik tujuan.'],example:'Menyesuaikan panjang atau bentuk bagian denah, misalnya memperlebar ruang dengan menarik sisi tertentu.',mistake:'Pemilihan window yang keliru dapat membuat objek hanya berpindah atau tidak berubah sesuai rencana. Gunakan crossing selection pada bagian yang akan ditarik.'}
+};
+
 const LB=['Command Explorer','Choose Your Step','Drawing Master'];
 const CAT_LB=['Dasar Menggambar','Modifikasi Objek','Modifikasi Lanjutan'];
 
@@ -845,7 +910,31 @@ function stage(n){
     window.syncStudentSession(S.sessionId, buildSyncPayload(false));
   }
 }
-const cards=()=>CAT_LB.map((t,k)=>`<h3>${t}</h3><div class="cg">${C.filter(c=>c.g==k+1).map(c=>`<div class="cd">${ico(c)}<div><b class="mono">${c.n}</b> <span class="al mono">${c.a}</span><p>${c.f}</p></div></div>`).join('')}</div>`).join('');
+function commandDiagram(name){
+  const common='fill="none" stroke="#00f0ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
+  const yellow='style="stroke:#ffd166"';
+  const gray='stroke="#8296ad" stroke-dasharray="4 3"';
+  const diagrams={
+    LINE:`<path ${common} d="M10 46 L92 12"/><circle cx="10" cy="46" r="3" fill="#ffd166"/><circle cx="92" cy="12" r="3" fill="#ffd166"/>`,
+    POLYLINE:`<path ${common} d="M10 46 L30 15 L54 39 L91 12"/>`,
+    CIRCLE:`<circle ${common} cx="51" cy="29" r="20"/><path ${yellow} ${common} d="M51 29 L71 29"/><circle cx="51" cy="29" r="3" fill="#ffd166"/>`,
+    ARC:`<path ${common} d="M12 47 Q51 -8 91 47"/><path ${yellow} ${common} d="M12 47 L91 47" stroke-dasharray="4 3"/>`,
+    RECTANGLE:`<rect ${common} x="18" y="12" width="66" height="34"/>`,
+    MOVE:`<rect ${gray} x="8" y="20" width="24" height="20"/><rect ${common} x="67" y="20" width="24" height="20"/><path ${yellow} ${common} d="M35 30 H61 M55 24 L61 30 L55 36"/>`,
+    COPY:`<rect ${common} x="9" y="22" width="25" height="21"/><rect ${gray} x="65" y="13" width="25" height="21"/><path ${yellow} ${common} d="M37 31 H59 M53 25 L59 31 L53 37"/>`,
+    ROTATE:`<rect ${gray} x="12" y="18" width="25" height="24"/><path ${common} d="M65 15 L87 27 L75 45 L53 33 Z"/><path ${yellow} ${common} d="M42 14 A18 18 0 0 1 52 46 M48 40 L52 46 L58 43"/>`,
+    MIRROR:`<path ${gray} d="M51 7 V51"/><rect ${common} x="12" y="19" width="25" height="24"/><rect ${common} x="65" y="19" width="25" height="24"/><path ${yellow} ${common} d="M43 28 H59 M53 22 L59 28 L53 34"/>`,
+    SCALE:`<rect ${gray} x="13" y="22" width="25" height="22"/><rect ${common} x="57" y="10" width="36" height="34"/><path ${yellow} ${common} d="M40 32 L53 21 M47 21 H53 V27"/>`,
+    TRIM:`<path ${gray} d="M14 12 V47 M11 30 H91"/><path ${common} d="M14 30 H43 M60 30 H91"/><path ${yellow} ${common} d="M46 25 L56 35 M56 25 L46 35"/>`,
+    EXTEND:`<path ${gray} d="M80 10 V48"/><path ${common} d="M12 30 H80"/><path ${yellow} ${common} d="M57 22 L65 30 L57 38"/>`,
+    OFFSET:`<path ${common} d="M15 42 L53 10 M31 50 L69 18"/><path ${yellow} ${common} d="M56 39 L82 13 M76 13 H82 V19"/>`,
+    FILLET:`<path ${gray} d="M18 12 V42 H88"/><path ${common} d="M18 12 V28 Q18 42 32 42 H88"/><path ${yellow} ${common} d="M29 28 Q29 31 32 31"/>`,
+    STRETCH:`<rect ${common} x="15" y="15" width="34" height="30"/><path ${gray} d="M49 15 V45"/><path ${yellow} ${common} d="M49 30 H86 M78 23 L86 30 L78 37"/>`
+  };
+  return `<svg class="diagram" viewBox="0 0 100 58" aria-label="Ilustrasi skematis ${name}" role="img">${diagrams[name]||`<path ${common} d="M10 45 L90 12"/>`}</svg>`;
+}
+
+const cards=()=>CAT_LB.map((t,k)=>`<h3>${t}</h3><div class="cg">${C.filter(c=>c.g==k+1).map(c=>{const m=MATERIAL[c.n]||{};return `<article class="command-card"><div class="command-symbol">${ico(c)}</div><div><div class="command-head"><h4 class="mono">${c.n}</h4><span class="command-alias">Alias: ${c.a}${c.x?` / ${c.x.join(', ')}`:''}</span></div><p>${c.f}</p></div><div class="command-concept"><b>Konsep</b><p>${m.concept||c.f}</p></div><div class="command-example"><b>Contoh</b><p>${m.example||'Penerapan pada gambar teknik bangunan.'}</p></div><div class="command-visual">${commandDiagram(c.n)}<div class="visual-copy"><b>Ilustrasi konsep: ${c.n}</b><small>${m.mistake||''}</small></div></div></article>`}).join('')}</div>`).join('');
 
 function morphNavigate(renderCallback) {
   const panel = app.querySelector('.panel');
@@ -877,15 +966,25 @@ function showWelcomeScreen() {
   app.innerHTML = `
     <section class="panel">
       <div class="splash-content">
-        <div style="font-size:48px; margin-bottom:12px;">📐</div>
+        <div class="splash-mark">📐</div>
         <div class="splash-title">SELAMAT DATANG DI <span>CADMISSION</span></div>
-        <div class="splash-subtitle">
-  Media Pembelajaran Game Based Learning yang dikembangkan untuk mata pelajaran Aplikasi Perangkat Lunak dan Perancangan Interior Gedung (APLPIG) kelas X DPIB, dengan cakupan materi Perintah Dasar AutoCAD.<br><br>
-  Media ini bertujuan untuk membantu peserta didik dalam menerapkan dan mengoperasikan berbagai perintah pada aplikasi penggambaran 2D AutoCAD.<br><br>
-  Setelah menggunakan media ini peserta didik diharapkan mampu menerapkan dan mengoperasikan berbagai perintah dasar pada aplikasi AutoCAD untuk menghasilkan gambar 2D yang baik dan benar.
-</div>
-
-        <button class="pulse-btn" id="startPortalBtn">KETUK UNTUK MELANJUTKAN ➔</button>
+        <p class="splash-intro">Media interaktif untuk mempelajari dan berlatih perintah penggambaran 2D AutoCAD melalui tantangan berbasis game.</p>
+        <div class="welcome-info">
+          <div class="welcome-block"><h3>IDENTITAS MEDIA</h3>
+            <p><strong>Mata Pelajaran</strong><br>Aplikasi Perangkat Lunak dan Perancangan Interior Gedung (APLPIG)</p>
+            <p><strong>Sasaran Peserta Didik</strong><br>Kelas X Konsentrasi Keahlian Desain Pemodelan dan Informasi Bangunan (DPIB)</p>
+            <p><strong>Bentuk Media</strong><br>Media pembelajaran interaktif berbasis game</p>
+          </div>
+          <div class="welcome-block"><h3>CAKUPAN MATERI</h3><ul><li>Perintah dasar menggambar</li><li>Perintah modifikasi objek</li><li>Perintah modifikasi lanjutan</li></ul></div>
+          <div class="welcome-block welcome-kd"><h3>ACUAN KOMPETENSI</h3>
+            <p><strong>KD 3.12</strong><br>Menerapkan perintah aplikasi penggambaran 2D.</p>
+            <p><strong>KD 4.12</strong><br>Mengoperasikan perintah aplikasi penggambaran 2D.</p>
+          </div>
+          <div class="welcome-block welcome-objective"><h3>TUJUAN PEMBELAJARAN</h3>
+            <p>Peserta didik mampu memahami fungsi, menerapkan prosedur, dan mengoperasikan perintah dasar serta modifikasi AutoCAD 2D secara tepat dan efektif untuk menghasilkan gambar 2D sesuai kaidah gambar teknik pada konteks DPIB.</p>
+          </div>
+        </div>
+        <button class="pulse-btn splash-cta" id="startPortalBtn">MULAI ➔</button>
       </div>
     </section>
   `;
@@ -995,7 +1094,7 @@ function home(){
   $('#nm').onkeydown=(e)=>{if(e.key==='Enter')$('#go').click()};
 
   $('#lr').onclick=()=>morphNavigate(()=>{
-    app.innerHTML=`<section class="panel"><h2>📖 Kamus Perintah AutoCAD 2D</h2><p class="mut">Pelajari ikon, nama, alias, dan fungsinya sebelum bermain.</p>${cards()}<div class="row"><button class="btn" id="bk">← Kembali ke Lobi</button></div></section>`;
+    app.innerHTML=`<section class="panel"><h2>📖 Kamus Perintah AutoCAD 2D</h2><p class="mut">Pilih dan pelajari perintah melalui penjelasan singkat, konsep, contoh DPIB, serta skema visual cara kerjanya.</p>${cards()}<div class="row"><button class="btn" id="bk">← Kembali ke Lobi</button></div></section>`;
     $('#bk').onclick=()=>morphNavigate(home);
   });
   
@@ -1126,138 +1225,149 @@ function typed(items,next,rs){
   let rq=rs||null;
   stage(1);
 
+  const taskFor = n => ({
+    OFFSET:{instruction:'Buat garis sejajar ke arah atas dengan jarak <b>15 cm</b> dari garis yang telah tersedia.',stages:[
+      {type:'input',prompt:'Specify offset distance:',label:'Tahap 1: Masukkan jarak offset',unit:'cm',answer:'15'},
+      {type:'canvas',prompt:'Select object to offset:',label:'Tahap 2: Select garis yang akan di-offset',target:'offset-line'},
+      {type:'canvas',prompt:'Specify point on side to offset:',label:'Tahap 3: Pilih sisi atas tempat garis sejajar dibuat',target:'offset-up'}]},
+    FILLET:{instruction:'Bulatkan sudut pertemuan dua garis dengan radius <b>5 cm</b>.',stages:[
+      {type:'input',prompt:'Enter option:',label:'Tahap 1: Ketik R (Radius)',answer:'R',placeholder:'Ketik R'},
+      {type:'input',prompt:'Specify fillet radius:',label:'Tahap 2: Masukkan radius',unit:'cm',answer:'5'},
+      {type:'canvas',prompt:'Select first object:',label:'Tahap 3: Select garis pertama',target:'fillet-first'},
+      {type:'canvas',prompt:'Select second object:',label:'Tahap 4: Select garis kedua yang akan dibulatkan',target:'fillet-second'}]},
+    STRETCH:{instruction:'Perpanjang objek tersebut ke sebelah kanan sejauh <b>70 cm</b> sesuai arah yang ditentukan.',stages:[
+      {type:'canvas',prompt:'Select objects to stretch:',label:'Tahap 1: Select bagian objek yang akan diperpanjang',target:'stretch-object'},
+      {type:'input',prompt:'Specify stretch displacement:',label:'Tahap 2: Masukkan jarak peregangan',unit:'cm',answer:'70'},
+      {type:'canvas',prompt:'Specify direction:',label:'Tahap 3: Tentukan arah peregangan',target:'stretch-right'}]},
+    TRIM:{instruction:'Hilangkan bagian garis horizontal yang melewati batas garis vertikal.',stages:[
+      {type:'canvas',prompt:'Select cutting edge:',label:'Tahap 1: Select garis sebagai batas pemotong',target:'trim-boundary'},
+      {type:'enter',prompt:'Select cutting edges: Enter to continue',label:'Tahap 2: Klik Enter untuk melanjutkan',answer:'ENTER'},
+      {type:'canvas',prompt:'Select segment to trim:',label:'Tahap 3: Select bagian garis yang harus dihilangkan',target:'trim-segment'}]},
+    EXTEND:{instruction:'Hubungkan garis horizontal yang terputus hingga mencapai batas garis vertikal.',stages:[
+      {type:'canvas',prompt:'Select boundary edge:',label:'Tahap 1: Select garis sebagai batas perpanjangan',target:'extend-boundary'},
+      {type:'enter',prompt:'Select boundary edges: Enter to continue',label:'Tahap 2: Klik Enter untuk melanjutkan',answer:'ENTER'},
+      {type:'canvas',prompt:'Select object to extend:',label:'Tahap 3: Select garis yang akan diperpanjang',target:'extend-segment'}]}
+  }[n] || {instruction:'Gunakan command yang sesuai dengan fungsi perintah.',stages:[]});
+
   function show(){
-    const c=Q[i];
-    let fails=0, fin=0, hintedThisQ=0, res=null;
+    const c=Q[i], task=taskFor(c.n);
+    let fails=0, fin=0, hintedThisQ=0, res=null, step=0, stepErrors=0, commandDone=0;
     const rsq=rq; rq=null;
-    if(rsq){ fails=rsq.fails||0; fin=rsq.fin?1:0; hintedThisQ=rsq.hinted?1:0; res=rsq.res||null; }
+    if(rsq){ fails=rsq.fails||0; fin=rsq.fin?1:0; hintedThisQ=rsq.hinted?1:0; res=rsq.res||null; step=rsq.step||0; stepErrors=rsq.stepErrors||0; commandDone=rsq.commandDone?1:0; filletFirst=rsq.filletFirst||null; }
     const order=Q.map(x=>x.n);
-    const saveView=()=>setView({type:'typed',order,i,fails,fin,hinted:hintedThisQ,res});
+    const saveView=()=>setView({type:'typed',order,i,fails,fin,hinted:hintedThisQ,res,step,stepErrors,commandDone,filletFirst});
 
     app.innerHTML=`<section class="panel">${steps(1)}
       <h2>Command Explorer (3/3)</h2>
-      <div class="attempt-badge" id="attBadge">🎯 Kesempatan: 2 tersisa · 💡 Sisa Bantuan: ${S.hintsLeft}</div>
-      <p class="mut">Soal ${i+1} dari ${Q.length} – ketik nama perintah atau alias-nya di command line, lalu tekan Enter.</p>
-      <div class="q">“${c.f}”</div>
+      <div class="attempt-badge" id="attBadge">🎯 Kesempatan: ${Math.max(0,2-fails)} tersisa · 💡 Sisa Bantuan: ${S.hintsLeft}</div>
+      <p class="mut">Soal ${i+1} dari ${Q.length} – ketik command, tekan Enter, lalu ikuti prompt dan masukkan parameter atau pilih objek sesuai prosedur.</p>
+      <div class="q">${task.instruction}</div>
       <canvas id="cv" width="360" height="220"></canvas>
-      <div class="cmd"><span class="mono">Command:</span><input id="in" class="mono" autocomplete="off" spellcheck="false" placeholder="Ketik perintah (mis. TRIM)"><button class="btn" id="en">Enter</button></div>
+      <div class="cmd"><span class="mono">Command:</span><input id="in" class="mono" autocomplete="off" spellcheck="false" placeholder="Ketik perintah (mis. ${c.n})"><button type="button" class="btn" id="en">Enter</button></div>
+      <div id="stepArea"></div>
       <div class="fb" id="fb"></div>
-      <div class="row" id="actionRow">
-        <button class="btn ghost" id="hn" ${S.hintsLeft<=0?'disabled':''}>💡 Gunakan Bantuan (−30) [${S.hintsLeft}/2]</button>
-      </div>
+      <div class="row" id="actionRow"><button class="btn ghost" id="hn" ${S.hintsLeft<=0?'disabled':''}>💡 Gunakan Bantuan (−30) [${S.hintsLeft}/2]</button></div>
     </section>`;
 
-    const cv=$('#cv'), inp=$('#in'), fb=$('#fb'), hnBtn=$('#hn'), attBadge=$('#attBadge'), actionRow=$('#actionRow');
+    const cv=$('#cv'), inp=$('#in'), fb=$('#fb'), hnBtn=$('#hn'), attBadge=$('#attBadge'), actionRow=$('#actionRow'), stepArea=$('#stepArea');
     scene(cv,c.n,0);
     inp.focus();
+    let stageInput=null;
 
-    const updateBadge = () => {
-      const rem = Math.max(0, 2 - fails);
-      attBadge.innerHTML = `🎯 Kesempatan: ${rem} tersisa · 💡 Sisa Bantuan: ${S.hintsLeft}`;
+    const updateBadge=()=>{attBadge.innerHTML=`🎯 Kesempatan: ${Math.max(0,2-fails)} tersisa · 💡 Sisa Bantuan: ${S.hintsLeft}`;};
+    const showNextButton=()=>{
+      actionRow.innerHTML=`<button class="btn" id="nx">${i==Q.length-1?'Lanjut ke Choose Your Step':'Soal Berikutnya'} →</button>`;
+      $('#nx').onclick=()=>{beep('click');morphNavigate(()=>{i++;i==Q.length?next():show();});};
     };
-
-    const showNextButton = () => {
-      actionRow.innerHTML = `<button class="btn" id="nx">${i==Q.length-1?'Lanjut ke Choose Your Step':'Soal Berikutnya'} →</button>`;
-      $('#nx').onclick = () => {
-        beep('click');
-        morphNavigate(() => {
-          i++;
-          i == Q.length ? next() : show();
-        });
-      };
-    };
-
-    const useHint = () => {
-      if(fin || hintedThisQ || S.hintsLeft <= 0) return;
-      hintedThisQ = 1;
-      S.hintsLeft--;
-      S.score = Math.max(0, S.score - 30);
-      hud();
-      if(S && S.sessionId) window.syncStudentSession(S.sessionId, buildSyncPayload(false));
-      saveView();
-      beep('click');
-
-      hnBtn.disabled = true;
-      hnBtn.textContent = `💡 Bantuan Terpakai [${S.hintsLeft}/2]`;
-      updateBadge();
-
-      fb.innerHTML = `<div class="fb-card hint">💡 <b>Petunjuk:</b> Perintah diawali huruf <b class="mono">“${c.n[0]}”</b> (${c.n.length} huruf), dan alias-nya diawali <b class="mono">“${c.a[0]}”</b>.</div>`;
+    const useHint=()=>{
+      if(fin||hintedThisQ||S.hintsLeft<=0)return;
+      hintedThisQ=1;S.hintsLeft--;S.score=Math.max(0,S.score-30);hud();
+      if(S&&S.sessionId)window.syncStudentSession(S.sessionId,buildSyncPayload(false));
+      saveView();beep('click');hnBtn.disabled=true;hnBtn.textContent=`💡 Bantuan Terpakai [${S.hintsLeft}/2]`;updateBadge();
+      fb.innerHTML=`<div class="fb-card hint">💡 <b>Petunjuk:</b> Perintah diawali huruf <b class="mono">${c.n[0]}</b> (${c.n.length} huruf), dan alias-nya diawali <b class="mono">${c.a[0]}</b>.</div>`;
       inp.focus();
     };
-
-    const go = () => {
-      if(fin) return;
-      const v = inp.value.trim().toUpperCase();
-      if(!v) return;
-
-      if(v == c.n || v == c.a || (c.x||[]).includes(v)){
-        fin = 1;
-        pts(1, fails === 0 ? 150 : 75, c.n);
-        res = 'ok';
-        saveView();
-        beep('ok');
-        flashPanel('ok');
-        inp.disabled = true;
-        $('#en').disabled = true;
-        inp.classList.add('okk');
-        fb.innerHTML = `<div class="fb-card ok">✔ <b>Luar Biasa!</b> Perintah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>) tepat! Perhatikan simulasi perintah pada layar kerja di atas.</div>`;
-        anim(cv, c.n);
-        showNextButton();
-      } else {
-        pts(0, 0, c.n);
-        fails++;
-        saveView();
-        beep('bad');
-        flashPanel('bad');
-        updateBadge();
-        inp.classList.add('bad');
-        setTimeout(()=>inp.classList.remove('bad'), 450);
-
-        if(fails === 1){
-          inp.value = '';
-          inp.focus();
-          fb.innerHTML = `<div class="fb-card bad">✖ <b>Kurang tepat!</b> Periksa kembali fungsi perintah yang diminta. Kamu masih memiliki <b>1 kesempatan</b> lagi.</div>`;
-        } else {
-          fin = 1;
-          res = 'fail';
-          saveView();
-          inp.disabled = true;
-          $('#en').disabled = true;
-          fb.innerHTML = `<div class="fb-card bad">✖ <b>Kesempatan habis!</b> Jawaban yang benar adalah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>). Silakan lanjut ke soal berikutnya.</div>`;
-          anim(cv, c.n);
-          showNextButton();
-        }
+    const complete=()=>{
+      fin=1;res='ok';
+      const earned=(fails===0&&stepErrors===0)?150:75;
+      pts(1,earned,c.n);saveView();beep('ok');flashPanel('ok');
+      fb.innerHTML=`<div class="fb-card ok">✔ <b>Berhasil!</b> Kamu menyelesaikan command <b class="mono">${c.n}</b> beserta tahapan input dan pemilihan objek dengan tepat. ${fails||stepErrors?`Skor penyelesaian: <b>${earned}</b> (ada percobaan yang perlu diperbaiki).`:`Skor: <b>${earned}</b>.`}</div>`;
+      scene(cv,c.n,1);showNextButton();
+    };
+    const renderStage=()=>{
+      if(fin||!commandDone)return;
+      if(step>=task.stages.length){complete();return;}
+      const st=task.stages[step];
+      stepArea.innerHTML=`<div class="fb-card hint"><b>${st.label}</b></div>`+
+        (st.type==='input'?`<div class="cmd" style="margin-top:8px"><span class="mono">Input:</span><input id="stageInput" class="mono" autocomplete="off" placeholder="${st.placeholder||'Masukkan nilai'}" ${st.unit?`inputmode="decimal"`:''}><span class="mono stage-unit">${st.unit||''}</span><button type="button" class="btn" id="stageEnter">Enter</button></div>`:
+        st.type==='enter'?`<div class="cmd" style="margin-top:8px;justify-content:flex-start"><button type="button" class="btn" id="stageEnter">↵ Enter</button></div>`:
+        `<div class="fb-card hint">Klik langsung garis/objek pada gambar di atas untuk memilih. ${st.target==='offset-up'?'Klik area di atas garis untuk menentukan sisi offset.':st.target==='stretch-right'?'Klik area gambar untuk menentukan arah peregangan.':''}</div>`);
+      if(st.type==='input'){
+        stageInput=$('#stageInput');stageInput.focus();
+        const check=()=>{
+          const val=stageInput.value.trim().toUpperCase();if(!val)return;
+          if(val===String(st.answer).toUpperCase()){
+            beep('ok');fb.innerHTML=`<div class="fb-card ok">✔ Input benar. Lanjutkan ke tahap berikutnya.</div>`;step++;saveView();renderStage();
+          }else{
+            stepErrors++;saveView();beep('bad');flashPanel('bad');stageInput.value='';stageInput.focus();
+            fb.innerHTML=`<div class="fb-card bad">✖ Input belum tepat. Periksa kembali parameter yang diminta.</div>`;
+          }
+        };
+        const stageEnterBtn=$('#stageEnter');
+        stageEnterBtn.addEventListener('click',e=>{e.preventDefault();check();});
+        stageInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+      }else if(st.type==='enter'){
+        const stageEnterBtn=$('#stageEnter');
+        stageEnterBtn.addEventListener('click',e=>{e.preventDefault();beep('click');step++;saveView();renderStage();});
       }
     };
+    const canvasPick=(ev)=>{
+      if(fin||!commandDone||step>=task.stages.length)return;
+      const st=task.stages[step];if(st.type!=='canvas')return;
+      const r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)*cv.width/r.width,y=(ev.clientY-r.top)*cv.height/r.height;
+      const near=(a,b,t=18)=>Math.abs(a-b)<=t;
+      let ok=false;
+      if(c.n==='OFFSET'&&st.target==='offset-line') ok=near(y,110,24)&&x>45&&x<315;
+      else if(c.n==='OFFSET'&&st.target==='offset-up') ok=y<90&&x>40&&x<320;
+      else if(c.n==='FILLET'&&st.target==='fillet-first') ok=(near(x,120,22)&&y>35&&y<180)||(near(y,160,22)&&x>120&&x<320);
+      else if(c.n==='FILLET'&&st.target==='fillet-second') ok=filletFirst==='vertical' ? (near(y,160,22)&&x>120&&x<320) : filletFirst==='horizontal' ? (near(x,120,22)&&y>35&&y<180) : false;
+      else if(c.n==='STRETCH'&&st.target==='stretch-object') ok=x>145&&x<205&&y>65&&y<155;
+      else if(c.n==='STRETCH'&&st.target==='stretch-right') ok=x>220&&y>65&&y<155;
+      else if(c.n==='TRIM'&&st.target==='trim-boundary') ok=near(x,180,24)&&y>35&&y<185;
+      else if(c.n==='TRIM'&&st.target==='trim-segment') ok=x>180&&x<315&&near(y,110,22);
+      else if(c.n==='EXTEND'&&st.target==='extend-boundary') ok=near(x,290,24)&&y>35&&y<185;
+      else if(c.n==='EXTEND'&&st.target==='extend-segment') ok=x>50&&x<285&&near(y,110,22);
+      if(ok){
+        // FILLET accepts either line order; first selection is remembered visually/state-wise.
+        if(c.n==='FILLET'&&st.target==='fillet-first'){filletFirst=near(x,120,22)?'vertical':'horizontal';step++;saveView();fb.innerHTML='<div class="fb-card ok">✔ Garis pertama terpilih. Sekarang pilih garis lainnya.</div>';renderStage();return;}
+        beep('ok');fb.innerHTML=`<div class="fb-card ok">✔ Objek/posisi tepat. Lanjutkan.</div>`;step++;saveView();renderStage();
+      }else{stepErrors++;saveView();beep('bad');flashPanel('bad');fb.innerHTML='<div class="fb-card bad">✖ Klik objek atau posisi yang sesuai dengan instruksi pada gambar.</div>';}
+    };
+    cv.onclick=canvasPick;
 
-    hnBtn.onclick = useHint;
-    $('#en').onclick = go;
-    inp.onkeydown = e => { if(e.key === 'Enter') go(); };
-
+    const go=()=>{
+      if(fin||commandDone)return;
+      const v=inp.value.trim().toUpperCase();if(!v)return;
+      if(v===c.n||v===c.a||(c.x||[]).includes(v)){
+        commandDone=1;saveView();beep('ok');flashPanel('ok');inp.disabled=true;$('#en').disabled=true;inp.classList.add('okk');
+        fb.innerHTML=`<div class="fb-card ok">✔ Command <b class="mono">${c.n}</b> benar. Sekarang ikuti prompt berikutnya seperti pada penggunaan AutoCAD.</div>`;
+        renderStage();
+      }else{
+        pts(0,0,c.n);fails++;saveView();beep('bad');flashPanel('bad');updateBadge();inp.classList.add('bad');setTimeout(()=>inp.classList.remove('bad'),450);
+        if(fails===1){inp.value='';inp.focus();fb.innerHTML=`<div class="fb-card bad">✖ Command belum tepat. Periksa kembali nama perintah atau alias-nya. Kamu masih memiliki <b>1 kesempatan</b>.</div>`;}
+        else{fin=1;res='fail';saveView();inp.disabled=true;$('#en').disabled=true;fb.innerHTML=`<div class="fb-card bad">✖ <b>Kesempatan mengetik command habis!</b> Command yang benar adalah <b class="mono">${c.n}</b>. Kamu dapat melanjutkan soal berikutnya.</div>`;scene(cv,c.n,1);showNextButton();}
+      }
+    };
+    hnBtn.onclick=useHint;
+    const commandEnter=$('#en');
+    commandEnter.addEventListener('click',e=>{e.preventDefault();go();});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go();}});
     saveView();
-    // pulihkan keadaan soal ini bila halaman dimuat ulang
     if(rsq){
-      if(hintedThisQ){
-        hnBtn.disabled = true;
-        hnBtn.textContent = `💡 Bantuan Terpakai [${S.hintsLeft}/2]`;
-        fb.innerHTML = `<div class="fb-card hint">💡 <b>Petunjuk:</b> Perintah diawali huruf <b class="mono">“${c.n[0]}”</b> (${c.n.length} huruf), dan alias-nya diawali <b class="mono">“${c.a[0]}”</b>.</div>`;
-      }
+      if(hintedThisQ){hnBtn.disabled=true;hnBtn.textContent=`💡 Bantuan Terpakai [${S.hintsLeft}/2]`;fb.innerHTML=`<div class="fb-card hint">💡 <b>Petunjuk:</b> Perintah diawali huruf <b class="mono">${c.n[0]}</b> (${c.n.length} huruf), dan alias-nya diawali <b class="mono">${c.a[0]}</b>.</div>`;}
       updateBadge();
-      if(fin){
-        inp.disabled = true;
-        $('#en').disabled = true;
-        if(res === 'ok'){
-          inp.value = c.n;
-          inp.classList.add('okk');
-          fb.innerHTML = `<div class="fb-card ok">✔ <b>Luar Biasa!</b> Perintah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>) tepat! Perhatikan simulasi perintah pada layar kerja di atas.</div>`;
-        } else {
-          fb.innerHTML = `<div class="fb-card bad">✖ <b>Kesempatan habis!</b> Jawaban yang benar adalah <b class="mono">${c.n}</b> (alias <b class="mono">${c.a}</b>). Silakan lanjut ke soal berikutnya.</div>`;
-        }
-        scene(cv, c.n, 1);
-        showNextButton();
-      } else if(fails >= 1){
-        fb.innerHTML = `<div class="fb-card bad">✖ <b>Kurang tepat!</b> Periksa kembali fungsi perintah yang diminta. Kamu masih memiliki <b>1 kesempatan</b> lagi.</div>`;
-      }
+      if(fin){inp.disabled=true;$('#en').disabled=true;if(res==='ok'){inp.value=c.n;inp.classList.add('okk');scene(cv,c.n,1);showNextButton();}else showNextButton();}
+      else if(commandDone){inp.value=c.n;inp.disabled=true;$('#en').disabled=true;renderStage();}
     }
   }
   show();
@@ -1504,7 +1614,7 @@ function result(){
 
  $('#ag').onclick=()=>morphNavigate(home);
  $('#kd').onclick=()=>morphNavigate(()=>{
-   $('#app').innerHTML=`<section class="panel"><h2>📖 Kamus Perintah</h2>${cards()}<div class="row"><button class="btn" id="bk">← Kembali</button></div></section>`;
+   $('#app').innerHTML=`<section class="panel"><h2>📖 Kamus Perintah</h2><p class="mut">Referensi ringkas perintah AutoCAD 2D dilengkapi konsep, contoh gambar teknik bangunan, dan ilustrasi skematis.</p>${cards()}<div class="row"><button class="btn" id="bk">← Kembali</button></div></section>`;
    $('#bk').onclick=()=>morphNavigate(result);
  });
 

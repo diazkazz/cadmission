@@ -1251,7 +1251,7 @@ function typed(items,next,rs){
 
   function show(){
     const c=Q[i], task=taskFor(c.n);
-    let fails=0, fin=0, hintedThisQ=0, res=null, step=0, stepErrors=0, commandDone=0;
+    let fails=0, fin=0, hintedThisQ=0, res=null, step=0, stepErrors=0, commandDone=0, filletFirst=null;
     const rsq=rq; rq=null;
     if(rsq){ fails=rsq.fails||0; fin=rsq.fin?1:0; hintedThisQ=rsq.hinted?1:0; res=rsq.res||null; step=rsq.step||0; stepErrors=rsq.stepErrors||0; commandDone=rsq.commandDone?1:0; filletFirst=rsq.filletFirst||null; }
     const order=Q.map(x=>x.n);
